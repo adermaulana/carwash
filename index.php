@@ -69,11 +69,10 @@
           <div class="row flex-grow">
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left p-5">
-                <div class="brand-logo">
-                  <img src="assets/images/logo.svg">
+                <div  class="brand-logo text-center">
+                  <img src="assets/images/carwash.png">
                 </div>
-                <h4>Hello! let's get started</h4>
-                <h6 class="font-weight-light">Sign in to continue.</h6>
+                <h3 style="margin-top:-40px;" class="text-center">Login</h3>
                 <form class="pt-3" method="POST">
                   <div class="form-group">
                     <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username">
