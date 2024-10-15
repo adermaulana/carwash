@@ -13,6 +13,18 @@ if($_SESSION['status'] != 'login'){
 
 }
 
+if(isset($_GET['hal']) == "hapus"){
+
+  $hapus = mysqli_query($koneksi, "DELETE FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+
+  if($hapus){
+      echo "<script>
+      alert('Hapus data sukses!');
+      document.location='layanan.php';
+      </script>";
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -205,7 +217,7 @@ if($_SESSION['status'] != 'login'){
                           <td>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></td>
                           <td>
                             <a href="" class="badge badge-warning text-decoration-none">Edit</a>
-                            <a href="" class="badge badge-danger text-decoration-none">Hapus</a>
+                            <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">Hapus</a>
                          </td>
                         </tr>
                         <?php
