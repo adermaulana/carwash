@@ -111,7 +111,12 @@ if($_SESSION['status'] != 'login'){
               </a>
               <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
-
+                <li class="nav-item">
+                    <a class="nav-link" href="booking.php">Lihat Booking</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="tambahbooking.php">Tambah Booking</a>
+                  </li>
                 </ul>
               </div>
             </li>
@@ -138,7 +143,9 @@ if($_SESSION['status'] != 'login'){
               </a>
               <div class="collapse" id="forms">
                 <ul class="nav flex-column sub-menu">
-
+                  <li class="nav-item">
+                    <a class="nav-link" href="pembayaran.php">Pembayaran</a>
+                  </li>
                 </ul>
               </div>
             </li>
@@ -149,7 +156,7 @@ if($_SESSION['status'] != 'login'){
               </a>
               <div class="collapse" id="charts">
                 <ul class="nav flex-column sub-menu">
-
+                  <a class="nav-link" href="rating.php">Rating</a>
                 </ul>
               </div>
             </li>
