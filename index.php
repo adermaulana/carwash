@@ -96,8 +96,8 @@
                                         <h1 data-animation="fadeInUp" data-delay=".2s">Cuci Mobil</h1>
                                         <div class="hero-details">
                                             <div class="stock-text" data-animation="fadeInUp" data-delay=".8s">
-                                                <h2>& Detailing Profesional</h2>
-                                                <h2>& Detailing Profesional</h2>
+                                                <h2>& Detailing</h2>
+                                                <h2>& Detailing </h2>
                                             </div>
                                             <P data-animation="fadeInUp" data-delay=".4s">Nikmati layanan cuci mobil dan detailing profesional kami. Dari kebersihan dasar hingga perawatan mendalam, kami hadir untuk menjaga kendaraan Anda tetap bersih dan terawat.</P>
                                             <!-- Hero-btn -->
