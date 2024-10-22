@@ -225,7 +225,11 @@ if(isset($_POST['simpan'])){
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail1">Status</label>
-                        <input type="number" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
+                        <select name="status" class="form-select" id="">
+                          <option value="" disabled selected>Pilih</option>
+                          <option value="">Cuci Menyeluruh</option>
+                          <option value="">Cuci Body</option>
+                        </select>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
                     </form>
