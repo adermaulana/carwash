@@ -9,33 +9,35 @@
         header("location:admin");
     }
 
-    if (isset($_POST['login'])) {
-        $username = $_POST['username'];
-        $password = md5($_POST['password']);
-    
-        $login = mysqli_query($koneksi, "SELECT * FROM `user_221061`
-                                    WHERE `username_221061` = '$username'
-                                    AND `password_221061` = '$password'
-                                    AND `status_221061` = 1");
-        $cek = mysqli_num_rows($login);
-    
-        if ($cek > 0) {
-            // Ambil data user
-            $admin_data = mysqli_fetch_assoc($login);
-            // Simpan data ke dalam session
-            $_SESSION['id_admin'] = $admin_data['id_221061']; // Pastikan sesuai dengan nama kolom di database
-            $_SESSION['nama_admin'] = $admin_data['name_221061']; // Pastikan sesuai dengan nama kolom di database
-            $_SESSION['username_admin'] = $username;
-            $_SESSION['status'] = "login";
-            // Redirect ke halaman admin
-            header('location:admin');
-        } else {
-            echo "<script>
-                alert('Login Gagal, Periksa Username dan Password Anda!');
-                window.location.href = 'login.php';
-                 </script>";
-        }
-    }
+    if (isset($_POST['registrasi'])) {
+      $password = md5($_POST['password']);
+      $username = $_POST['username'];
+
+      // Check if the username already exists
+      $checkUsername = mysqli_query($koneksi, "SELECT * FROM customer_221061 WHERE username_221061='$username'");
+      if (mysqli_num_rows($checkUsername) > 0) {
+          echo "<script>
+                  alert('Username sudah digunakan, pilih Username lain.');
+                  document.location='registrasi.php';
+              </script>";
+          exit; // Stop further execution
+      }
+
+      // If the username is not taken, proceed with the registration
+      $simpan = mysqli_query($koneksi, "INSERT INTO customer_221061 (nama_221061, alamat_221061, username_221061,no_hp_221061, password_221061) VALUES ('$_POST[nama]','$_POST[alamat]','$_POST[username]','$_POST[telepon]','$password')");
+
+      if ($simpan) {
+          echo "<script>
+                  alert('Berhasil Registrasi!');
+                  document.location='index.php';
+              </script>";
+      } else {
+          echo "<script>
+                  alert('Gagal!');
+                  document.location='registrasi.php';
+              </script>";
+      }
+  }
     
 
 ?>
@@ -75,22 +77,22 @@
                 <h3 style="margin-top:-40px;" class="text-center">Registrasi</h3>
                 <form class="pt-3" method="POST">
                   <div class="form-group">
-                    <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Nama">
+                    <input type="text" name="nama" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Nama">
                   </div>
                   <div class="form-group">
                     <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username">
                   </div>
                   <div class="form-group">
-                    <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Telepon">
+                    <input type="text" name="telepon" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Telepon">
                   </div>
                   <div class="form-group">
-                    <textarea class="form-control form-control-lg" placeholder="Alamat" name="" id="" rows="4"></textarea>
+                    <textarea class="form-control form-control-lg" name="alamat" placeholder="Alamat" name="" id="" rows="4"></textarea>
                   </div>
                   <div class="form-group">
                     <input type="password" name="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
                   </div>
                   <div class="mt-3 d-grid gap-2">
-                    <button type="submit" name="login" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">REGISTRASI</button>
+                    <button type="submit" name="registrasi" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">REGISTRASI</button>
                   </div>
                   <div class="text-center mt-4 font-weight-light"> Sudah punya akun? <a href="login.php" class="text-primary">Login</a>
                   </div>
