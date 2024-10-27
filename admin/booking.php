@@ -15,7 +15,7 @@ if($_SESSION['status'] != 'login'){
 
 if(isset($_GET['hal']) == "hapus"){
 
-  $hapus = mysqli_query($koneksi, "DELETE FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+  $hapus = mysqli_query($koneksi, "DELETE FROM pendaftaran_221061 WHERE id_pendaftaran_221061 = '$_GET[id]'");
 
   if($hapus){
       echo "<script>
@@ -218,16 +218,64 @@ if(isset($_GET['hal']) == "hapus"){
                       <tbody>
                       <?php
                             $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                            $tampil = mysqli_query($koneksi, "SELECT 
+                                                                  pendaftaran_221061.*,
+                                                                  jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
+                                                                  customer_221061.nama_221061 AS nama_customer
+                                                              FROM 
+                                                                  pendaftaran_221061
+                                                              JOIN 
+                                                                  jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
+                                                              JOIN 
+                                                                  customer_221061 ON pendaftaran_221061.id_customer_221061  = customer_221061.id_customer_221061 ;
+                                                              ");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
-                          <td></td>
-                          <td></td>
+                          <td><?= $data['nama_customer'] ?></td>
+                          <td><?= $data['jenis_cucian'] ?></td>
+                          <td><?= $data['tgl_pendaftaran_221061'] ?></td>
+                          <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
+                          <?php if ($data['status_221061'] === 'Pending'): ?>
+                          <td><span class="badge badge-warning"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Selesai'): ?>
+                          <td><span class="badge badge-success"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Dalam Pengerjaan'): ?>
+                          <td><span class="badge badge-primary"><?= $data['status_221061'] ?></span></td>
+                          <?php else: ?>
+                          <td><span class="badge badge-danger"><?= $data['status_221061'] ?></span></td>
+                          <?php  endif ?>
                           <td>
-                            <a href="" class="badge badge-warning text-decoration-none"></a>
-                            <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')"></a>
+                            <?php if ($data['status_221061'] === 'Lunas'): ?>
+                            <span  class="badge badge-secondary text-decoration-none">Selesai</span>
+                            <?php elseif ($data['status_221061'] === 'Ditolak'): ?>
+                            <span  class="badge badge-secondary text-decoration-none">Selesai</span>
+                          <?php else: ?>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal<?= $data['id_pendaftaran_221061'] ?>">
+                                        Konfirmasi
+                              </button>
+                                                                     <!-- Modal Konfirmasi -->
+                                    <div class="modal fade" id="confirmModal<?= $data['id_pendaftaran_221061'] ?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Pemesanan</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Apakah Anda yakin ingin mengonfirmasi pemesanan ini?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn bg-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <!-- Tombol untuk mengirim aksi konfirmasi -->
+                                            <a href="proses_konfirmasi.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-success">Konfirmasi</a>
+                                            <a href="proses_tolak.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-danger">Tolak</a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                          <?php  endif ?>
                          </td>
                         </tr>
                         <?php

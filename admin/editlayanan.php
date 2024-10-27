@@ -13,16 +13,37 @@ if($_SESSION['status'] != 'login'){
 
 }
 
-if(isset($_GET['hal']) == "hapus"){
+if(isset($_GET['hal'])){
+    if($_GET['hal'] == "edit"){
+        $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+        $data = mysqli_fetch_array($tampil);
+        if($data){
+            $id = $data['id_jenis_cucian_221061'];
+            $jenis_cucian = $data['jenis_cucian_221061'];
+            $biaya = $data['biaya_221061'];
 
-  $hapus = mysqli_query($koneksi, "DELETE FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+        }
+    }
+}
 
-  if($hapus){
-      echo "<script>
-      alert('Hapus data sukses!');
-      document.location='layanan.php';
-      </script>";
-  }
+if (isset($_POST['simpan'])) {
+    // Update data pelanggan
+    $simpan = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET
+                                        jenis_cucian_221061 = '$_POST[nama]',
+                                        biaya_221061 = '$_POST[biaya]'
+                                      WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+
+    if ($simpan) {
+        echo "<script>
+                alert('Edit data sukses!');
+                document.location='layanan.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Edit data Gagal!');
+                document.location='layanan.php';
+              </script>";
+    }
 }
 
 ?>
@@ -195,43 +216,23 @@ if(isset($_GET['hal']) == "hapus"){
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Layanan</h3>
+              <h3 class="page-title">Tambah Layanan</h3>
             </div>
             <div class="row">
-              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <a class="btn btn-success" href="tambahlayanan.php">Tambah Data</a>
-                    </p>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>Nama Layanan</th>
-                          <th>Biaya</th>
-                          <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                            $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
-                            while($data = mysqli_fetch_array($tampil)):
-                        ?>
-                        <tr>
-                          <td><?= $no++ ?></td>
-                          <td><?= $data['jenis_cucian_221061'] ?></td>
-                          <td>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></td>
-                          <td>
-                            <a href="editlayanan.php?hal=edit&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-warning text-decoration-none">Edit</a>
-                            <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">Hapus</a>
-                         </td>
-                        </tr>
-                        <?php
-                            endwhile; 
-                        ?>
-                      </tbody>
-                    </table>
+                    <form class="forms-sample" method="POST">
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Nama Layanan</label>
+                        <input type="text" class="form-control" name="nama" id="nama" value="<?= $jenis_cucian ?>" placeholder="Nama Layanan" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Biaya</label>
+                        <input type="number" class="form-control" name="biaya" id="biaya" value="<?= $biaya ?>" placeholder="Biaya" required>
+                      </div>
+                      <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
+                    </form>
                   </div>
                 </div>
               </div>

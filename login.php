@@ -28,7 +28,7 @@
             // Ambil data user
             $admin_data = mysqli_fetch_assoc($login);
             // Simpan data ke dalam session
-            $_SESSION['id_admin'] = $admin_data['id_221061']; // Pastikan sesuai dengan nama kolom di database
+            $_SESSION['id_admin'] = $admin_data['id_user_221061']; // Pastikan sesuai dengan nama kolom di database
             $_SESSION['nama_admin'] = $admin_data['name_221061']; // Pastikan sesuai dengan nama kolom di database
             $_SESSION['username_admin'] = $username;
             $_SESSION['status'] = "login";
@@ -38,8 +38,8 @@
           // Ambil data user
           $admin_data = mysqli_fetch_assoc($login);
           // Simpan data ke dalam session
-          $_SESSION['id_pelanggan'] = $admin_data['id_221061']; // Pastikan sesuai dengan nama kolom di database
-          $_SESSION['nama_pelanggan'] = $admin_data['name_221061']; // Pastikan sesuai dengan nama kolom di database
+          $_SESSION['id_pelanggan'] = $admin_data['id_customer_221061 ']; // Pastikan sesuai dengan nama kolom di database
+          $_SESSION['nama_pelanggan'] = $admin_data['nama_221061']; // Pastikan sesuai dengan nama kolom di database
           $_SESSION['username_pelanggan'] = $username;
           $_SESSION['status'] = "login";
           // Redirect ke halaman admin
