@@ -4,12 +4,9 @@ include '../koneksi.php';
 
 session_start();
 
-if($_SESSION['status'] != 'login'){
+if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
 
-    session_unset();
-    session_destroy();
-
-    header("location:../");
+  header("location:../pelanggan");
 
 }
 

@@ -1,9 +1,43 @@
+<?php
+
+include 'koneksi.php';
+
+session_start();
+
+if(isset($_SESSION['status']) != 'login'){
+
+    session_unset();
+    session_destroy();
+
+    echo "<script>
+    alert('Login terlebih dahulu untuk pesan!');
+    document.location='login.php';
+         </script>";
+
+}
+
+  if(isset($_SESSION['username_admin'])) {
+    $isLoggedIn = true;
+    $namaAdmin = $_SESSION['nama_admin']; // Ambil nama user dari session
+  } else if(isset($_SESSION['username_pelanggan'])) {
+    $isLoggedIn = true;
+    $namaPelanggan = $_SESSION['nama_pelanggan']; // Ambil nama user dari session
+  } 
+
+  else {
+      $isLoggedIn = false;
+  }
+
+
+?>
+
+
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Car wash</title>
+    <title><?= $namaPelanggan ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -67,7 +101,15 @@
                                     </div>
                                     <!-- Header-btn -->
                                     <div class="header-right-btn d-none d-lg-block ml-20">
+                                    <?php if($isLoggedIn): ?>
+                                        <?php if(isset($_SESSION['username_admin'])): ?>
+                                            <a href="admin" class="btn header-btn">Dashboard</a>
+                                        <?php else: ?>
+                                            <a href="pelanggan" class="btn header-btn">Dashboard</a>
+                                        <?php endif; ?>
+                                    <?php else: ?>
                                         <a href="login.php" class="btn header-btn">Login</a>
+                                    <?php endif; ?>
                                     </div>
                                 </div>
                             </div> 
@@ -112,13 +154,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="" style="margin-left:17px;"><strong>Nama</strong></label>
-                                    <input class="form-control" name="name" id="name" type="text" placeholder="Masukkan nama" required>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="" style="margin-left:17px;"><strong>Email</strong></label>
-                                    <input class="form-control" name="email" id="email" type="email" placeholder="Email" required>
+                                    <input class="form-control" name="name" id="name" type="text" value="<?= $namaPelanggan ?>" readonly>
                                 </div>
                             </div>
                             <div class="col-sm-6">

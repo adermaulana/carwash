@@ -20,7 +20,7 @@ if(isset($_GET['hal']) == "hapus"){
   if($hapus){
       echo "<script>
       alert('Hapus data sukses!');
-      document.location='layanan.php';
+      document.location='rating.php';
       </script>";
   }
 }
@@ -191,7 +191,7 @@ if(isset($_GET['hal']) == "hapus"){
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Nama Pelanggan</th>
+                          <th>Nama Layanan</th>
                           <th>Rating</th>
                           <th>Deskripsi</th>
                         </tr>
@@ -199,15 +199,28 @@ if(isset($_GET['hal']) == "hapus"){
                       <tbody>
                       <?php
                             $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                            $tampil = mysqli_query($koneksi, "SELECT r.*, j.*
+                                                              FROM rating_221061 r
+                                                              JOIN jenis_cucian_221061 j ON r.id_jenis_cucian_221061 = j.id_jenis_cucian_221061
+                                                              WHERE r.id_customer_221061 = '$_SESSION[id_pelanggan]';
+                                                              ");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
-                          <td>Mings</td>
-                          <td>3</td>
+                          <td><?= $data['jenis_cucian_221061'] ?></td>
+                          <?php $rating = (int)$data['rating_221061'];
+                          echo '<td>';
+                          for ($i = 1; $i <= 5; $i++) {
+                              if ($i <= $rating) {
+                                  echo '&#9733;'; // Bintang terisi
+                              } else {
+                                  echo '&#9734;'; // Bintang kosong
+                              }
+                          }
+                          echo '</td>';
+                          ?>
                           <td>Bagus</td>
-
                         </tr>
                         <?php
                             endwhile; 

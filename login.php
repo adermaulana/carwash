@@ -36,9 +36,9 @@
             header('location:admin');
         } else if ($cekPelanggan > 0) {
           // Ambil data user
-          $admin_data = mysqli_fetch_assoc($login);
+          $admin_data = mysqli_fetch_assoc($loginPelanggan);
           // Simpan data ke dalam session
-          $_SESSION['id_pelanggan'] = $admin_data['id_customer_221061 ']; // Pastikan sesuai dengan nama kolom di database
+          $_SESSION['id_pelanggan'] = $admin_data['id_customer_221061']; // Pastikan sesuai dengan nama kolom di database
           $_SESSION['nama_pelanggan'] = $admin_data['nama_221061']; // Pastikan sesuai dengan nama kolom di database
           $_SESSION['username_pelanggan'] = $username;
           $_SESSION['status'] = "login";

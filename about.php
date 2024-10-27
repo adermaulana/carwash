@@ -1,3 +1,25 @@
+<?php
+
+include 'koneksi.php';
+
+session_start();
+
+  if(isset($_SESSION['username_admin'])) {
+    $isLoggedIn = true;
+    $namaAdmin = $_SESSION['nama_admin']; // Ambil nama user dari session
+  } else if(isset($_SESSION['username_pelanggan'])) {
+    $isLoggedIn = true;
+    $namaPelanggan = $_SESSION['nama_pelanggan']; // Ambil nama user dari session
+  } 
+
+  else {
+      $isLoggedIn = false;
+  }
+
+
+?>
+
+
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -67,7 +89,15 @@
                                     </div>
                                     <!-- Header-btn -->
                                     <div class="header-right-btn d-none d-lg-block ml-20">
+                                    <?php if($isLoggedIn): ?>
+                                        <?php if(isset($_SESSION['username_admin'])): ?>
+                                            <a href="admin" class="btn header-btn">Dashboard</a>
+                                        <?php else: ?>
+                                            <a href="pelanggan" class="btn header-btn">Dashboard</a>
+                                        <?php endif; ?>
+                                    <?php else: ?>
                                         <a href="login.php" class="btn header-btn">Login</a>
+                                    <?php endif; ?>
                                     </div>
                                 </div>
                             </div> 

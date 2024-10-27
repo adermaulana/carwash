@@ -13,22 +13,49 @@ if($_SESSION['status'] != 'login'){
 
 }
 
-if(isset($_POST['simpan'])){
-    $simpan = mysqli_query($koneksi, "INSERT INTO jenis_cucian_221061 (jenis_cucian_221061, biaya_221061	
-) VALUES ('$_POST[nama]','$_POST[biaya]')");
+if (isset($_POST['simpan'])) {
+  // Ambil data dari form
+  $id_customer = $_POST['id_customer_221061'];
+  $id_jenis_cucian = $_POST['id_jenis_cucian_221061'];
+  $rating = $_POST['rating'];
+  $deskripsi = $_POST['deskripsi'];
 
-    if($simpan){
-        echo "<script>
-                alert('Simpan data sukses!');
-                document.location='layanan.php';
-            </script>";
-    } else {
-        echo "<script>
-                alert('Simpan data Gagal!');
-                document.location='layanan.php';
-            </script>";
-    }
+  // Cek apakah rating sudah ada
+  $cek = mysqli_query($koneksi, "SELECT * FROM rating_221061 WHERE id_customer_221061 = '$id_customer' AND id_jenis_cucian_221061 = '$id_jenis_cucian'");
+  
+  if (mysqli_num_rows($cek) > 0) {
+      // Jika sudah ada, lakukan update
+      $update = mysqli_query($koneksi, "UPDATE rating_221061 SET rating_221061 = '$rating', deskripsi_221061 = '$deskripsi' WHERE id_customer_221061 = '$id_customer' AND id_jenis_cucian_221061 = '$id_jenis_cucian'");
+      
+      if ($update) {
+          echo "<script>
+                  alert('Update data sukses!');
+                  document.location='rating.php';
+              </script>";
+      } else {
+          echo "<script>
+                  alert('Update data Gagal!');
+                  document.location='rating.php';
+              </script>";
+      }
+  } else {
+      // Jika belum ada, lakukan insert
+      $simpan = mysqli_query($koneksi, "INSERT INTO rating_221061 (id_customer_221061, id_jenis_cucian_221061, rating_221061, deskripsi_221061) VALUES ('$id_customer', '$id_jenis_cucian', '$rating', '$deskripsi')");
+      
+      if ($simpan) {
+          echo "<script>
+                  alert('Simpan data sukses!');
+                  document.location='rating.php';
+              </script>";
+      } else {
+          echo "<script>
+                  alert('Simpan data Gagal!');
+                  document.location='rating.php';
+              </script>";
+      }
+  }
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -54,6 +81,34 @@ if(isset($_POST['simpan'])){
     <link rel="stylesheet" href="../assets/css/style.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../assets/images/favicon.png" />
+    
+    <style>
+      .rating {
+          direction: rtl;
+          display: flex;
+          justify-content: center;
+      }
+
+      .rating input {
+          display: none; /* Sembunyikan input radio */
+      }
+
+      .rating label {
+          font-size: 40px;
+          color: lightgray;
+          cursor: pointer;
+      }
+
+      .rating input:checked ~ label {
+          color: gold; /* Warna bintang saat dipilih */
+      }
+
+      .rating label:hover,
+      .rating label:hover ~ label {
+          color: gold; /* Warna bintang saat hover */
+      }
+    </style>
+
   </head>
   <body>
     <div class="container-scroller">
@@ -193,17 +248,39 @@ if(isset($_POST['simpan'])){
                 <div class="card">
                   <div class="card-body">
                     <form class="forms-sample" method="POST">
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Jenis Layanan</label>
-                        <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama Layanan" required>
+                      <input type="hidden" name="id_customer_221061" value="<?= $_SESSION['id_pelanggan'] ?>">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Layanan</label>
+                        <select name="id_jenis_cucian_221061" id="layanan" class="form-select" required>
+                          <option  disabled selected>Pilih Layanan</option>
+                          <?php
+                                $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                                while($data = mysqli_fetch_array($tampil)):
+                            ?>
+                          <option value="<?= $data['id_jenis_cucian_221061'] ?>" data-harga="<?= $data['biaya_221061'] ?>"><?= $data['jenis_cucian_221061'] ?></option>
+                          <?php
+                            endwhile; 
+                          ?>
+                        </select>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail1">Rating</label>
-                        <input type="text" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5" />
+                            <label for="star5" class="star">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" />
+                            <label for="star4" class="star">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" />
+                            <label for="star3" class="star">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" />
+                            <label for="star2" class="star">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" />
+                            <label for="star1" class="star">★</label>
+                        </div>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail1">Deskripsi</label>
-                        <input type="text" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
+                        <textarea class="form-control" id="exampleTextarea1" name="deskripsi" rows="4"></textarea>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
                     </form>
