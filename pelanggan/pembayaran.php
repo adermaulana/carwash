@@ -239,7 +239,7 @@ if(isset($_GET['hal']) == "hapus"){
                                 </a>
                             </td>
                           <?php else: ?>
-                              <td><span class="text-danger">Tidak ada bukti pembayaran</span></td>
+                              <td><span class="text-danger"><small>Tidak ada bukti pembayaran</small></span></td>
                           <?php endif; ?>
                           <?php if ($data['status_221061'] === 'Pending'): ?>
                           <td><span class="badge badge-warning"><?= $data['status_221061'] ?></span></td>
