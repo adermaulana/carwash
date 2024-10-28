@@ -127,6 +127,12 @@ if(isset($_GET['hal']) == "hapus"){
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="../booking.php">
+                <span class="menu-title">Pesan Layanan</span>
+                <i class="mdi mdi-account-group menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="index.php">
                 <span class="menu-title">Dashboard</span>
                 <i class="mdi mdi-home menu-icon"></i>

@@ -9,7 +9,7 @@ $id_pemesanan = isset($_GET['id']) ? $_GET['id'] : null;
 
 if ($id_pemesanan) {
     // Query untuk mengubah status pemesanan menjadi 'dikonfirmasi'
-    $query = "UPDATE pendaftaran_221061 SET status_221061 = 'Dalam Pengerjaan' WHERE id_pendaftaran_221061 = '$id_pemesanan'";
+    $query = "UPDATE pendaftaran_221061 SET status_221061 = 'Selesai' WHERE id_pendaftaran_221061 = '$id_pemesanan'";
     $result = mysqli_query($koneksi, $query);
 
     if ($result) {

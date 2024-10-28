@@ -14,8 +14,8 @@ if($_SESSION['status'] != 'login'){
 }
 
 if(isset($_POST['simpan'])){
-    $simpan = mysqli_query($koneksi, "INSERT INTO jenis_cucian_221061 (jenis_cucian_221061, biaya_221061	
-) VALUES ('$_POST[nama]','$_POST[biaya]')");
+    $simpan = mysqli_query($koneksi, "INSERT INTO jenis_cucian_221061 (jenis_cucian_221061, biaya_221061, kuota_221061	
+) VALUES ('$_POST[nama]','$_POST[biaya]','$_POST[kuota]')");
 
     if($simpan){
         echo "<script>
@@ -214,6 +214,10 @@ if(isset($_POST['simpan'])){
                       <div class="form-group">
                         <label for="exampleInputEmail1">Biaya</label>
                         <input type="number" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kuota</label>
+                        <input type="number" class="form-control" name="kuota" id="kuota" placeholder="Kuota" required>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
                     </form>

@@ -41,6 +41,8 @@
           $_SESSION['id_pelanggan'] = $admin_data['id_customer_221061']; // Pastikan sesuai dengan nama kolom di database
           $_SESSION['nama_pelanggan'] = $admin_data['nama_221061']; // Pastikan sesuai dengan nama kolom di database
           $_SESSION['username_pelanggan'] = $username;
+          $_SESSION['alamat_pelanggan'] = $admin_data['alamat_221061'];;
+          $_SESSION['telepon_pelanggan'] = $admin_data['no_hp_221061'];;
           $_SESSION['status'] = "login";
           // Redirect ke halaman admin
           header('location:pelanggan');

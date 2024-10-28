@@ -21,6 +21,7 @@ if(isset($_GET['hal'])){
             $id = $data['id_jenis_cucian_221061'];
             $jenis_cucian = $data['jenis_cucian_221061'];
             $biaya = $data['biaya_221061'];
+            $kuota = $data['kuota_221061'];
 
         }
     }
@@ -30,7 +31,8 @@ if (isset($_POST['simpan'])) {
     // Update data pelanggan
     $simpan = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET
                                         jenis_cucian_221061 = '$_POST[nama]',
-                                        biaya_221061 = '$_POST[biaya]'
+                                        biaya_221061 = '$_POST[biaya]',
+                                        kuota_221061 = '$_POST[kuota]'
                                       WHERE id_jenis_cucian_221061 = '$_GET[id]'");
 
     if ($simpan) {
@@ -230,6 +232,10 @@ if (isset($_POST['simpan'])) {
                       <div class="form-group">
                         <label for="exampleInputEmail1">Biaya</label>
                         <input type="number" class="form-control" name="biaya" id="biaya" value="<?= $biaya ?>" placeholder="Biaya" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Kuota</label>
+                        <input type="number" class="form-control" name="kuota" id="kuota" value="<?= $kuota ?>" placeholder="Kuota" required>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
                     </form>

@@ -219,16 +219,17 @@ if(isset($_GET['hal']) == "hapus"){
                       <?php
                             $no = 1;
                             $tampil = mysqli_query($koneksi, "SELECT 
-                                                                  pendaftaran_221061.*,
-                                                                  jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
-                                                                  customer_221061.nama_221061 AS nama_customer
-                                                              FROM 
-                                                                  pendaftaran_221061
-                                                              JOIN 
-                                                                  jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
-                                                              JOIN 
-                                                                  customer_221061 ON pendaftaran_221061.id_customer_221061  = customer_221061.id_customer_221061 ;
-                                                              ");
+                                                        pendaftaran_221061.*,
+                                                        jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
+                                                        customer_221061.nama_221061 AS nama_customer
+                                                    FROM 
+                                                        pendaftaran_221061
+                                                    JOIN 
+                                                        jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
+                                                    JOIN 
+                                                        customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
+                                                    ORDER BY 
+                                                        pendaftaran_221061.id_pendaftaran_221061 DESC");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
@@ -247,7 +248,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <td><span class="badge badge-danger"><?= $data['status_221061'] ?></span></td>
                           <?php  endif ?>
                           <td>
-                            <?php if ($data['status_221061'] === 'Lunas'): ?>
+                            <?php if ($data['status_221061'] === 'Selesai'): ?>
                             <span  class="badge badge-secondary text-decoration-none">Selesai</span>
                             <?php elseif ($data['status_221061'] === 'Ditolak'): ?>
                             <span  class="badge badge-secondary text-decoration-none">Selesai</span>
@@ -269,8 +270,9 @@ if(isset($_GET['hal']) == "hapus"){
                                         <div class="modal-footer">
                                             <button type="button" class="btn bg-secondary" data-bs-dismiss="modal">Batal</button>
                                             <!-- Tombol untuk mengirim aksi konfirmasi -->
-                                            <a href="proses_konfirmasi.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-success">Konfirmasi</a>
+                                            <a href="proses_selesai.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-primary">Selesai</a>
                                             <a href="proses_tolak.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-danger">Tolak</a>
+                                            <a href="proses_konfirmasi.php?id=<?= $data['id_pendaftaran_221061'] ?>" class="btn btn-success">Dalam Pengerjaan</a>
                                         </div>
                                         </div>
                                     </div>

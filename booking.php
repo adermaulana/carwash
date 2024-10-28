@@ -21,12 +21,64 @@ if(isset($_SESSION['status']) != 'login'){
     $namaAdmin = $_SESSION['nama_admin']; // Ambil nama user dari session
   } else if(isset($_SESSION['username_pelanggan'])) {
     $isLoggedIn = true;
-    $namaPelanggan = $_SESSION['nama_pelanggan']; // Ambil nama user dari session
+    $namaPelanggan = $_SESSION['nama_pelanggan'];
+    $teleponPelanggan = $_SESSION['telepon_pelanggan'];
+    $alamatPelanggan = $_SESSION['alamat_pelanggan'];
   } 
 
   else {
       $isLoggedIn = false;
   }
+
+
+  if (isset($_POST['simpan'])) {
+    // Query untuk menyimpan data ke tabel pendaftaran_221061
+    $simpan = mysqli_query($koneksi, "INSERT INTO pendaftaran_221061 (id_customer_221061, id_jenis_cucian_221061, tgl_pendaftaran_221061, total_biaya_221061, status_221061) VALUES ('{$_POST['id_customer_221061']}', '{$_POST['id_jenis_cucian_221061']}', '{$_POST['tgl_pendaftaran_221061']}', '{$_POST['total_biaya_221061']}', 'Pending')");
+
+    if ($simpan) {
+        // Ambil ID pendaftaran yang baru saja dimasukkan
+        $id_pendaftaran = mysqli_insert_id($koneksi);
+
+        // Generate nilai untuk no_nota_221061
+        $no_nota = "NOTA-" . date("Ymd") . "-" . $id_pendaftaran; // Contoh format: NOTA-20241027-1
+
+        // Data untuk tabel transaksi
+        $tanggal_transaksi = date("Y-m-d"); // atau gunakan tanggal yang sesuai kebutuhan
+        $status_transaksi = "Pending"; // contoh status awal
+        $bukti_pembayaran = ""; // kosongkan jika belum ada bukti
+
+        // Query untuk memasukkan data ke tabel transaksi_221061
+        $transaksi = mysqli_query($koneksi, "INSERT INTO transaksi_221061 (id_pendaftaran_221061, no_nota_221061, tanggal_221061, status_221061, bukti_pembayaran_221061) VALUES ('$id_pendaftaran', '$no_nota', '$tanggal_transaksi', '$status_transaksi', '$bukti_pembayaran')");
+
+        if ($transaksi) {
+            // Kurangi kuota di tabel jenis_cucian_221061
+            $id_jenis_cucian = $_POST['id_jenis_cucian_221061'];
+            $kurangiKuota = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET kuota_221061 = kuota_221061 - 1 WHERE id_jenis_cucian_221061 = '$id_jenis_cucian'");
+
+            if ($kurangiKuota) {
+                echo "<script>
+                        alert('Berhasil booking, segera lakukan pembayaran!');
+                        document.location='pelanggan';
+                      </script>";
+            } else {
+                echo "<script>
+                        alert('Booking berhasil, tapi gagal mengurangi kuota!');
+                        document.location='pelanggan';
+                      </script>";
+            }
+        } else {
+            echo "<script>
+                    alert('Simpan data gagal di tabel transaksi!');
+                    document.location='booking.php';
+                  </script>";
+        }
+    } else {
+        echo "<script>
+                alert('Simpan data gagal di tabel pendaftaran!');
+                document.location='booking.php';
+              </script>";
+    }
+}
 
 
 ?>
@@ -149,7 +201,9 @@ if(isset($_SESSION['status']) != 'login'){
                         <h2 class="contact-title">Booking Sekarang Juga</h2>
                     </div>
                     <div class="col-lg-8">
-                    <form class="form-contact contact_form" method="post" id="contactForm">
+                    <form class="form-contact contact_form" method="post">
+                        <input type="hidden" name="id_customer_221061" value="<?= $_SESSION['id_pelanggan'] ?>">
+                        <input type="hidden" name="tgl_pendaftaran_221061" value="<?= date("Y-m-d") ?>">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
@@ -160,30 +214,42 @@ if(isset($_SESSION['status']) != 'login'){
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="" style="margin-left:17px;"><strong>No Telepon</strong></label>
-                                    <input class="form-control" name="phone" id="phone" type="text" placeholder="No Telepon" required>
+                                    <input class="form-control" name="phone" id="phone" type="text" value="<?= $teleponPelanggan ?>" readonly>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="" style="margin-left:17px;"><strong>Alamat</strong></label>
-                                    <input class="form-control" name="address" id="address" type="text" placeholder="Alamat" required>
+                                    <input class="form-control" name="address" id="address" type="text" value="<?= $alamatPelanggan ?>" placeholder="Alamat" readonly>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <label for="" style="margin-left:17px;"><strong>Jenis Layanan</strong></label>
                                 <div class="form-group">
-                                    <select class="form-control valid" id="serviceType" required>
-                                        <option value="" disabled selected>Pilih Jenis Layanan</option>
-                                        <option value="1" data-available="5">Cuci Mobil</option>
-                                        <option value="2" data-available="3">Cuci Motor</option>
-                                        <option value="3" data-available="0">Detailing</option>
-                                    </select>
+                                <select name="id_jenis_cucian_221061" id="layanan" class="form-select" required>
+                                    <option  disabled selected>Pilih Layanan</option>
+                                    <?php
+                                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                                            while($data = mysqli_fetch_array($tampil)):
+                                        ?>
+                                    <option value="<?= $data['id_jenis_cucian_221061'] ?>" data-kuota="<?= $data['kuota_221061'] ?>" data-harga="<?= $data['biaya_221061'] ?>"><?= $data['jenis_cucian_221061'] ?></option>
+                                    <?php
+                                        endwhile; 
+                                    ?>
+                                </select>
                                     <small id="quotaMessage" style="color:red;"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="" style="margin-left:17px;"><strong>Harga</strong></label>
+                                    <input type="hidden" name="total_biaya_221061">
+                                    <input class="form-control" name="hargaDisplay" id="harga" type="text" readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mt-3">
-                            <button type="submit" class="button button-contactForm boxed-btn">Kirim</button>
+                            <button type="submit" name="simpan" class="button button-contactForm boxed-btn">Kirim</button>
                         </div>
                     </form>
                     </div>
@@ -351,14 +417,52 @@ if(isset($_SESSION['status']) != 'login'){
 <script src="assets/home/js/plugins.js"></script>
 <script src="assets/home/js/main.js"></script>
 
+<script>
+    document.querySelector(".form-contact").addEventListener("submit", function(event) {
+        // Mengambil elemen form
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const layanan = document.getElementById("layanan").value;
+        const hargaDisplay = document.getElementById("harga").value.trim();
+
+        // Validasi setiap input, jika kosong tampilkan alert dan batalkan submit
+        if (name === "") {
+            alert("Nama tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (phone === "") {
+            alert("Nomor telepon tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (address === "") {
+            alert("Alamat tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (layanan === null || layanan === "Pilih Layanan") {
+            alert("Silakan pilih jenis layanan.");
+            event.preventDefault();
+            return;
+        }
+        if (hargaDisplay === "") {
+            alert("Harga tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+    });
+</script>
+
 
 <script>
     $(document).ready(function() {
         let isQuotaAvailable = true; // Variabel untuk melacak status kuota
 
-        $('#serviceType').change(function() {
+        $('#layanan').change(function() {
             const selectedOption = $(this).find('option:selected');
-            const availableQuota = selectedOption.data('available');
+            const availableQuota = selectedOption.data('kuota'); // Sesuaikan nama data sesuai dengan HTML
 
             // Mengupdate pesan kuota
             const quotaMessage = $('#quotaMessage');
@@ -383,7 +487,39 @@ if(isset($_SESSION['status']) != 'login'){
     });
 </script>
 
+<script type="text/javascript">
 
+    function formatRupiah(angka) {
+      var number_string = angka.toString().replace(/[^,\d]/g, ''),
+          split = number_string.split(','),
+          sisa = split[0].length % 3,
+          rupiah = split[0].substr(0, sisa),
+          ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+      // Tambahkan titik jika angka lebih dari ribuan
+      if (ribuan) {
+          separator = sisa ? '.' : '';
+          rupiah += separator + ribuan.join('.');
+      }
+
+      return rupiah; // hasilnya tanpa simbol Rp
+    }
+
+
+
+    $('#layanan').on('change', function(){
+    // ambil data dari elemen option yang dipilih
+    const harga = $('#layanan option:selected').data('harga');
+
+    // tampilkan data ke element
+    $('[name=hargaDisplay]').val(`Rp ${formatRupiah(harga)}`);
+    $('[name=total_biaya_221061]').val(`${harga}`);
+
+  
+
+    });
+
+    </script>
 
 
 </body>

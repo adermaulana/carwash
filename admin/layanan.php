@@ -209,6 +209,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <th>No</th>
                           <th>Nama Layanan</th>
                           <th>Biaya</th>
+                          <th>Kuota</th>
                           <th>Aksi</th>
                         </tr>
                       </thead>
@@ -222,6 +223,8 @@ if(isset($_GET['hal']) == "hapus"){
                           <td><?= $no++ ?></td>
                           <td><?= $data['jenis_cucian_221061'] ?></td>
                           <td>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></td>
+                          <td><?= $data['kuota_221061'] ?></td>
+
                           <td>
                             <a href="editlayanan.php?hal=edit&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-warning text-decoration-none">Edit</a>
                             <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">Hapus</a>

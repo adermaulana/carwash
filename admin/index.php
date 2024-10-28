@@ -10,6 +10,20 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
 
 }
 
+
+$pendapatan = "SELECT SUM(pendaftaran_221061.total_biaya_221061) AS total_biaya_pendaftaran
+    FROM transaksi_221061
+    JOIN pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061";
+$resultpendapatan = $koneksi->query($pendapatan);
+$rowpendapatan = $resultpendapatan->fetch_assoc();
+$total_pendapatan = $rowpendapatan["total_biaya_pendaftaran"];
+
+
+$pelanggan = "SELECT COUNT(*) as id_customer_221061  FROM customer_221061";
+$resultpelanggan = $koneksi->query($pelanggan);
+$rowpelanggan = $resultpelanggan->fetch_assoc();
+$total_pelanggan = $rowpelanggan["id_customer_221061"];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +31,7 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
+    <title>Admin</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="../assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../assets/vendors/ti-icons/css/themify-icons.css">
@@ -176,8 +190,7 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
                     <img src="../assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Total Pendapatan<i class="mdi mdi-chart-line mdi-24px float-end"></i>
                     </h4>
-                    <h2 class="mb-5">Rp 15.000</h2>
-                    <h6 class="card-text">Increased by 60%</h6>
+                    <h2 class="mb-5"><?= "Rp " . number_format($total_pendapatan, 0, ',', '.') ?></h2>
                   </div>
                 </div>
               </div>
@@ -187,8 +200,7 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
                     <img src="../assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Total Pelanggan<i class="mdi mdi-bookmark-outline mdi-24px float-end"></i>
                     </h4>
-                    <h2 class="mb-5">3</h2>
-                    <h6 class="card-text">Decreased by 10%</h6>
+                    <h2 class="mb-5"><?= $total_pelanggan ?> Orang</h2>
                   </div>
                 </div>
               </div>
@@ -199,30 +211,57 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_admin'])){
                   <div class="card-body">
                     <h4 class="card-title">Booking hari ini</h4>
                     <div class="table-responsive">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th> No </th>
-                            <th> Nama </th>
-                            <th> Jenis Cucian </th>
-                            <th> Status </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              1
-                            </td>
-                            <td>
-                              <img src="../assets/images/faces/face1.jpg" class="me-2" alt="image"> David Grey
-                            </td>
-                            <td> Fund is not recieved </td>
-                            <td>
-                              <label class="badge badge-gradient-warning">Belum Dikerjakan</label>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>No</th>
+                          <th>Nama Pelanggan</th>
+                          <th>Jenis Layanan</th>
+                          <th>Tanggal Booking</th>
+                          <th>Biaya</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <?php
+                            $no = 1;
+                            $tampil = mysqli_query($koneksi, "SELECT 
+                                                                  pendaftaran_221061.*,
+                                                                  jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
+                                                                  customer_221061.nama_221061 AS nama_customer
+                                                              FROM 
+                                                                  pendaftaran_221061
+                                                              JOIN 
+                                                                  jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
+                                                              JOIN 
+                                                                  customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
+                                                              WHERE 
+                                                                  pendaftaran_221061.tgl_pendaftaran_221061 = CURDATE()
+                                                              ORDER BY 
+                                                                  pendaftaran_221061.id_pendaftaran_221061 DESC;");
+                            while($data = mysqli_fetch_array($tampil)):
+                        ?>
+                        <tr>
+                          <td><?= $no++ ?></td>
+                          <td><?= $data['nama_customer'] ?></td>
+                          <td><?= $data['jenis_cucian'] ?></td>
+                          <td><?= $data['tgl_pendaftaran_221061'] ?></td>
+                          <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
+                          <?php if ($data['status_221061'] === 'Pending'): ?>
+                          <td><span class="badge badge-warning"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Selesai'): ?>
+                          <td><span class="badge badge-success"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Dalam Pengerjaan'): ?>
+                          <td><span class="badge badge-primary"><?= $data['status_221061'] ?></span></td>
+                          <?php else: ?>
+                          <td><span class="badge badge-danger"><?= $data['status_221061'] ?></span></td>
+                          <?php  endif ?>
+                        </tr>
+                        <?php
+                            endwhile; 
+                        ?>
+                      </tbody>
+                    </table>
                     </div>
                   </div>
                 </div>

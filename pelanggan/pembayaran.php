@@ -47,6 +47,10 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
+
+    <!-- lightbox -->
+    <link rel="stylesheet" href="../assets/lightbox/css/lightbox.min.css">
+
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../assets/images/favicon.png" />
   </head>
@@ -187,15 +191,15 @@ if(isset($_GET['hal']) == "hapus"){
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <table class="table">
+                  <table class="table">
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Kode Booking</th>
-                          <th>Tanggal</th>
+                          <th>Nama Pelanggan</th>
+                          <th>Nota Booking</th>
+                          <th>Tanggal Transaksi</th>
                           <th>Total Biaya</th>
-                          <th>Bayar</th>
-                          <th>Kembali</th>
+                          <th>Bukti Pembayaran</th>
                           <th>Status</th>
                           <th>Aksi</th>
                         </tr>
@@ -203,34 +207,76 @@ if(isset($_GET['hal']) == "hapus"){
                       <tbody>
                       <?php
                             $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                              $tampil = mysqli_query($koneksi, "SELECT 
+                                                                    transaksi_221061.*, 
+                                                                    pendaftaran_221061.total_biaya_221061,
+                                                                    customer_221061.nama_221061
+                                                                FROM 
+                                                                    transaksi_221061
+                                                                JOIN 
+                                                                    pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
+                                                                JOIN 
+                                                                    customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061 ORDER BY 
+                                                                transaksi_221061.id_transaksi_221061 DESC;
+                                                                ");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
-                          <td>001</td>
-                          <td>12-12-2024</td>
-                          <td>Rp. 20.000</td>
-                          <td>Rp. 20.000</td>
-                          <td>Rp. 0</td>
-                          <td>Sudah Bayar</td>
+                          <td><?= $data['nama_221061'] ?></td>
+                          <td><?= $data['no_nota_221061'] ?></td>
+                          <td><?= $data['tanggal_221061'] ?></td>
+                          <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
+                          <?php if (!empty($data['bukti_pembayaran_221061'])): ?>
+                            <td>
+                                <a href="uploads/<?= $data['bukti_pembayaran_221061']; ?>" data-lightbox="bukti-pembayaran" data-title="Bukti Pembayaran">
+                                    <img src="uploads/<?= $data['bukti_pembayaran_221061']; ?>" alt="Bukti Pembayaran" width="100" height="100">
+                                </a>
+                            </td>
+                          <?php else: ?>
+                              <td><span class="text-danger">Tidak ada bukti pembayaran</span></td>
+                          <?php endif; ?>
+                          <?php if ($data['status_221061'] === 'Pending'): ?>
+                          <td><span class="badge badge-warning"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Selesai'): ?>
+                          <td><span class="badge badge-success"><?= $data['status_221061'] ?></span></td>
+                          <?php else: ?>
+                          <td><span class="badge badge-danger"><?= $data['status_221061'] ?></span></td>
+                          <?php  endif ?>
+
+                          <?php if ($data['status_221061'] === 'Pending'): ?>
                           <td>
-                            <a href="" class="badge  badge-success text-decoration-none">Terbayar</a>
-                           
-                         </td>
-                        </tr>
-                        <tr>
-                          <td><?= $no++ ?></td>
-                          <td>001</td>
-                          <td>12-12-2024</td>
-                          <td>Rp. 20.000</td>
-                          <td>Rp. 0</td>
-                          <td>Rp. 0</td>
-                          <td>Belum Bayar</td>
-                          <td>
-                            <a href="" class="btn  btn-danger text-decoration-none">Belum Terbayar</a>
-                           
-                         </td>
+                          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal<?= $data['id_transaksi_221061'] ?>">
+                                        Upload Pembayaran
+                              </button>
+                                                                     <!-- Modal Konfirmasi -->
+                                  <div class="modal fade" id="confirmModal<?= $data['id_transaksi_221061'] ?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                      <div class="modal-content">
+                                          <div class="modal-header">
+                                              <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Pemesanan</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                              Upload Bukti Pembayaran
+                                              <form action="proses_upload_pembayaran.php" method="post" enctype="multipart/form-data">
+                                                  <input type="hidden" name="id_transaksi_221061" value="<?= $data['id_transaksi_221061'] ?>">
+                                                  <div class="mb-3 mt-3">
+                                                      <input type="file" class="form-control" name="bukti_pembayaran_221061" id="bukti_pembayaran_221061" accept="image/*" required>
+                                                  </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn bg-secondary" data-bs-dismiss="modal">Batal</button>
+                                              <button type="submit" class="btn btn-primary">Konfirmasi</button>
+                                              </form>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </td>
+                          <?php else: ?>
+                          <td><span class="badge badge-secondary">Selesai</span></td>
+                          <?php  endif ?>
                         </tr>
                         <?php
                             endwhile; 
@@ -274,5 +320,8 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- Custom js for this page -->
     <script src="../assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
+
+    <!-- lightbox -->
+    <script src="../assets/lightbox/js/lightbox-plus-jquery.js"></script>
   </body>
 </html>

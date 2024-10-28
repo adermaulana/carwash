@@ -47,6 +47,8 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/lightbox/css/lightbox.min.css">
+
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../assets/images/favicon.png" />
   </head>
@@ -207,7 +209,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <th>No</th>
                           <th>Nama Pelanggan</th>
                           <th>Nota Booking</th>
-                          <th>Tanggal Bayar</th>
+                          <th>Tanggal Transaksi</th>
                           <th>Total Biaya</th>
                           <th>Bukti Pembayaran</th>
                           <th>Status</th>
@@ -225,7 +227,8 @@ if(isset($_GET['hal']) == "hapus"){
                                                                 JOIN 
                                                                     pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
                                                                 JOIN 
-                                                                    customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061;
+                                                                    customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061 ORDER BY 
+                                                                transaksi_221061.id_transaksi_221061 DESC;
                                                                 ");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
@@ -235,8 +238,12 @@ if(isset($_GET['hal']) == "hapus"){
                           <td><?= $data['no_nota_221061'] ?></td>
                           <td><?= $data['tanggal_221061'] ?></td>
                           <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
-                          <?php if (!empty($data['bukti_pembayaran'])): ?>
-                              <td><img src="<?= $data['bukti_pembayaran']; ?>" alt="Bukti Pembayaran" width="100" height="100"></td>
+                          <?php if (!empty($data['bukti_pembayaran_221061'])): ?>
+                            <td>
+                                <a href="../pelanggan/uploads/<?= $data['bukti_pembayaran_221061']; ?>" data-lightbox="bukti-pembayaran" data-title="Bukti Pembayaran">
+                                    <img src="../pelanggan/uploads/<?= $data['bukti_pembayaran_221061']; ?>" alt="Bukti Pembayaran" width="100" height="100">
+                                </a>
+                            </td>
                           <?php else: ?>
                               <td><span class="text-danger">Tidak ada bukti pembayaran</span></td>
                           <?php endif; ?>
@@ -291,5 +298,6 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- Custom js for this page -->
     <script src="../assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
+    <script src="../assets/lightbox/js/lightbox-plus-jquery.js"></script>
   </body>
 </html>
