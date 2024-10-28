@@ -25,7 +25,7 @@ $pengeluaran = "SELECT
                     pendaftaran_221061.id_customer_221061";
 $resultpengeluaran = $koneksi->query($pengeluaran);
 $rowpengeluaran = $resultpengeluaran->fetch_assoc();
-$total_pengeluaran = $rowpengeluaran["total_biaya_pendaftaran"];
+$total_pengeluaran = !empty($rowpengeluaran['total_biaya_pendaftaran']) ? $rowpengeluaran['total_biaya_pendaftaran'] : 0;
 
 
 $pelanggan = "SELECT COUNT(*) as id_customer_221061  FROM customer_221061";
