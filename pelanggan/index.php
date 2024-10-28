@@ -6,7 +6,7 @@ session_start();
 
 if($_SESSION['status'] != 'login' || !isset($_SESSION['username_pelanggan'])){
 
-  header("location:../admin");
+  header("location:../");
 
 }
 
