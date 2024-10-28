@@ -219,7 +219,9 @@ if(isset($_GET['hal']) == "hapus"){
                                                                 JOIN 
                                                                     pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
                                                                 JOIN 
-                                                                    customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061 ORDER BY 
+                                                                    customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
+                                                                    WHERE 
+                                                                  pendaftaran_221061.id_customer_221061 = '$_SESSION[id_pelanggan]' ORDER BY 
                                                                 transaksi_221061.id_transaksi_221061 DESC;
                                                                 ");
                             while($data = mysqli_fetch_array($tampil)):
@@ -250,7 +252,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <?php if ($data['status_221061'] === 'Pending'): ?>
                           <td>
                           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal<?= $data['id_transaksi_221061'] ?>">
-                                        Upload Pembayaran
+                                        Pembayaran
                               </button>
                                                                      <!-- Modal Konfirmasi -->
                                   <div class="modal fade" id="confirmModal<?= $data['id_transaksi_221061'] ?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
