@@ -199,7 +199,6 @@ if(isset($_GET['hal']) == "hapus"){
                         <tr>
                           <th>No</th>
                           <th>Nama Pelanggan</th>
-                          <th>Nota Booking</th>
                           <th>Tanggal Transaksi</th>
                           <th>Total Biaya</th>
                           <th>Bukti Pembayaran</th>
@@ -229,7 +228,6 @@ if(isset($_GET['hal']) == "hapus"){
                         <tr>
                           <td><?= $no++ ?></td>
                           <td><?= $data['nama_221061'] ?></td>
-                          <td><?= $data['no_nota_221061'] ?></td>
                           <td><?= $data['tanggal_221061'] ?></td>
                           <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
                           <?php if (!empty($data['bukti_pembayaran_221061'])): ?>
