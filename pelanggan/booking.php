@@ -198,26 +198,45 @@ if(isset($_GET['hal']) == "hapus"){
                       <thead>
                         <tr>
                           <th>No</th>
+                          <th>Nama Pelanggan</th>
                           <th>Jenis Layanan</th>
                           <th>Tanggal Booking</th>
                           <th>Biaya</th>
                           <th>Status</th>
-                          <th>Aksi</th>
                         </tr>
                       </thead>
                       <tbody>
                       <?php
                             $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                            $tampil = mysqli_query($koneksi, "SELECT 
+                                                        pendaftaran_221061.*,
+                                                        jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
+                                                        customer_221061.nama_221061 AS nama_customer
+                                                    FROM 
+                                                        pendaftaran_221061
+                                                    JOIN 
+                                                        jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
+                                                    JOIN 
+                                                        customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
+                                                    ORDER BY 
+                                                        pendaftaran_221061.id_pendaftaran_221061 DESC");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
-                          <td></td>
-                          <td>
-                            <a href="" class="badge badge-warning text-decoration-none"></a>
-                            <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')"></a>
-                         </td>
+                          <td><?= $data['nama_customer'] ?></td>
+                          <td><?= $data['jenis_cucian'] ?></td>
+                          <td><?= $data['tgl_pendaftaran_221061'] ?></td>
+                          <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
+                          <?php if ($data['status_221061'] === 'Pending'): ?>
+                          <td><span class="badge badge-warning"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Selesai'): ?>
+                          <td><span class="badge badge-success"><?= $data['status_221061'] ?></span></td>
+                          <?php elseif ($data['status_221061'] === 'Dalam Pengerjaan'): ?>
+                          <td><span class="badge badge-primary"><?= $data['status_221061'] ?></span></td>
+                          <?php else: ?>
+                          <td><span class="badge badge-danger"><?= $data['status_221061'] ?></span></td>
+                          <?php  endif ?>
                         </tr>
                         <?php
                             endwhile; 

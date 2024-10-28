@@ -10,6 +10,29 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_pelanggan'])){
 
 }
 
+$id_customer = $_SESSION['id_pelanggan'];
+
+$pengeluaran = "SELECT 
+                    pendaftaran_221061.id_customer_221061,
+                    SUM(pendaftaran_221061.total_biaya_221061) AS total_biaya_pendaftaran
+                FROM 
+                    transaksi_221061
+                JOIN 
+                    pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
+                WHERE 
+                    pendaftaran_221061.id_customer_221061 = '$id_customer' 
+                GROUP BY 
+                    pendaftaran_221061.id_customer_221061";
+$resultpengeluaran = $koneksi->query($pengeluaran);
+$rowpengeluaran = $resultpengeluaran->fetch_assoc();
+$total_pengeluaran = $rowpengeluaran["total_biaya_pendaftaran"];
+
+
+$pelanggan = "SELECT COUNT(*) as id_customer_221061  FROM customer_221061";
+$resultpelanggan = $koneksi->query($pelanggan);
+$rowpelanggan = $resultpelanggan->fetch_assoc();
+$total_pelanggan = $rowpelanggan["id_customer_221061"];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,6 +118,12 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_pelanggan'])){
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="../booking.php">
+                <span class="menu-title">Pesan Layanan</span>
+                <i class="mdi mdi-account-group menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="index.php">
                 <span class="menu-title">Dashboard</span>
                 <i class="mdi mdi-home menu-icon"></i>
@@ -162,8 +191,7 @@ if($_SESSION['status'] != 'login' || !isset($_SESSION['username_pelanggan'])){
                     <img src="../assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Total Pengeluaran<i class="mdi mdi-chart-line mdi-24px float-end"></i>
                     </h4>
-                    <h2 class="mb-5">Rp 15.000</h2>
-                    <h6 class="card-text">Increased by 60%</h6>
+                    <h2 class="mb-5"><?= "Rp " . number_format($total_pengeluaran, 0, ',', '.') ?></h2>
                   </div>
                 </div>
               </div>
