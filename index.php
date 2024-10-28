@@ -157,72 +157,29 @@ session_start();
                     </div>
                 </div>
                 <div class="row">
+                <?php
+                            $no = 1;
+                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                            while($data = mysqli_fetch_array($tampil)):
+                        ?>
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
                         <div class="single-card text-center mb-30">
                             <div class="card-top">
                                 <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Cuci Mobil</h4>
+                                <h4><?= $data['jenis_cucian_221061'] ?></h4>
                                 <p>Mulai dari</p>
                             </div>
                             <div class="card-mid">
-                                <h4>Rp 50.000</h4>
+                                <h4>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></h4>
                             </div>
                             <div class="card-bottom">
-                                <ul>
-                                    <li>Cuci Eksterior Lengkap</li>
-                                    <li>Membersihkan Interior</li>
-                                    <li>Pembersihan Karpet dan Jok</li>
-                                    <li>Waxing dan Polishing</li>
-                                    <li>Perawatan Roda dan Ban</li>
-                                </ul>
                                 <a href="booking.php" class="borders-btn">Booking Sekarang</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                        <div class="single-card text-center mb-30">
-                            <div class="card-top">
-                                <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Detailing</h4>
-                                <p>Mulai dari</p>
-                            </div>
-                            <div class="card-mid">
-                                <h4>Rp 100.000</h4>
-                            </div>
-                            <div class="card-bottom">
-                            <ul>
-                                <li>Cuci Eksterior Lengkap</li>
-                                <li>Membersihkan Interior</li>
-                                <li>Pembersihan Karpet dan Jok</li>
-                                <li>Waxing dan Polishing</li>
-                                <li>Perawatan Roda dan Ban</li>
-                            </ul>
-                                <a href="booking.php" class="borders-btn">Booking Sekarang</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                        <div class="single-card text-center mb-30">
-                            <div class="card-top">
-                                <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Cuci & Detailing</h4>
-                                <p>Mulai dari</p>
-                            </div>
-                            <div class="card-mid">
-                                <h4>Rp 200.000</h4>
-                            </div>
-                            <div class="card-bottom">
-                            <ul>
-                                <li>Cuci Eksterior Lengkap</li>
-                                <li>Membersihkan Interior</li>
-                                <li>Pembersihan Karpet dan Jok</li>
-                                <li>Waxing dan Polishing</li>
-                                <li>Perawatan Roda dan Ban</li>
-                            </ul>
-                                <a href="booking.php" class="borders-btn">Booking Sekarang</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php
+                            endwhile; 
+                        ?>
                 </div>
             </div>
         </section>
