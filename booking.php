@@ -185,7 +185,7 @@ if(isset($_SESSION['status']) != 'login'){
                         <div class="row">
                             <div class="col-xl-12">
                                 <div class="hero-cap hero-cap2">
-                                    <h2>Contact</h2>
+                                    <h2>Booking</h2>
                                 </div>
                             </div>
                         </div>
