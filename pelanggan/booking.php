@@ -206,17 +206,19 @@ if(isset($_GET['hal']) == "hapus"){
                       <?php
                             $no = 1;
                             $tampil = mysqli_query($koneksi, "SELECT 
-                                                        pendaftaran_221061.*,
-                                                        jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
-                                                        customer_221061.nama_221061 AS nama_customer
-                                                    FROM 
-                                                        pendaftaran_221061
-                                                    JOIN 
-                                                        jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
-                                                    JOIN 
-                                                        customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
-                                                    ORDER BY 
-                                                        pendaftaran_221061.id_pendaftaran_221061 DESC");
+                                                                  pendaftaran_221061.*,
+                                                                  jenis_cucian_221061.jenis_cucian_221061 AS jenis_cucian,
+                                                                  customer_221061.nama_221061 AS nama_customer
+                                                              FROM 
+                                                                  pendaftaran_221061
+                                                              JOIN 
+                                                                  jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
+                                                              JOIN 
+                                                                  customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
+                                                              WHERE 
+                                                                  pendaftaran_221061.id_customer_221061 = '$_SESSION[id_pelanggan]'
+                                                              ORDER BY 
+                                                                  pendaftaran_221061.id_pendaftaran_221061 DESC");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
