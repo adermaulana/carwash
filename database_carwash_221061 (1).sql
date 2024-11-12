@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2024 at 08:47 AM
+-- Generation Time: Nov 12, 2024 at 02:40 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,9 @@ CREATE TABLE `customer_221061` (
 --
 
 INSERT INTO `customer_221061` (`id_customer_221061`, `username_221061`, `nama_221061`, `no_hp_221061`, `alamat_221061`, `password_221061`) VALUES
-(64, 'gunjack', 'Gunjack', '12', '12', '182cda3fef93c5a311d5cdd654541133');
+(64, 'gunjack', 'Gunjack', '12', '12', '182cda3fef93c5a311d5cdd654541133'),
+(65, 'pelanggan', 'pelanggan', '3032', 'pelanggan', '7f78f06d2d1262a0a222ca9834b15d9d'),
+(66, 'pelanggan umum', 'Pelanggan Umum', '-', '-', '827ccb0eea8a706c4c34a16891f84e7b');
 
 -- --------------------------------------------------------
 
@@ -61,8 +63,11 @@ CREATE TABLE `jenis_cucian_221061` (
 --
 
 INSERT INTO `jenis_cucian_221061` (`id_jenis_cucian_221061`, `jenis_cucian_221061`, `biaya_221061`, `kuota_221061`) VALUES
-(8, 'Cuci Menyeluruh', 40000, 0),
-(9, 'Cuci Ban', 10000, 1);
+(10, 'Cuci Eksterior', 50000, 5),
+(11, 'Cuci Interior & Eksterior', 100000, 5),
+(12, 'Cuci Premium', 150000, 5),
+(13, 'Detailing Eksterior', 350000, 5),
+(14, 'Detailing Interior', 400000, 5);
 
 -- --------------------------------------------------------
 
@@ -79,13 +84,6 @@ CREATE TABLE `pendaftaran_221061` (
   `status_221061` enum('Pending','Dalam Pengerjaan','Selesai','Ditolak') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
---
--- Dumping data for table `pendaftaran_221061`
---
-
-INSERT INTO `pendaftaran_221061` (`id_pendaftaran_221061`, `id_customer_221061`, `id_jenis_cucian_221061`, `tgl_pendaftaran_221061`, `total_biaya_221061`, `status_221061`) VALUES
-(105, 64, 9, '2024-10-28', 10000, 'Selesai');
-
 -- --------------------------------------------------------
 
 --
@@ -99,13 +97,6 @@ CREATE TABLE `rating_221061` (
   `rating_221061` int(11) NOT NULL,
   `deskripsi_221061` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `rating_221061`
---
-
-INSERT INTO `rating_221061` (`id_rating_221061`, `id_customer_221061`, `id_jenis_cucian_221061`, `rating_221061`, `deskripsi_221061`) VALUES
-(1, 64, 8, 3, '12');
 
 -- --------------------------------------------------------
 
@@ -122,13 +113,6 @@ CREATE TABLE `transaksi_221061` (
   `bukti_pembayaran_221061` varchar(255) DEFAULT NULL,
   `id_user_221061` int(12) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `transaksi_221061`
---
-
-INSERT INTO `transaksi_221061` (`id_transaksi_221061`, `id_pendaftaran_221061`, `no_nota_221061`, `tanggal_221061`, `status_221061`, `bukti_pembayaran_221061`, `id_user_221061`) VALUES
-(46, 105, 'NOTA-20241028-105', '2024-10-28', 'Pending', 'Screenshot (5).png', NULL);
 
 -- --------------------------------------------------------
 
@@ -207,19 +191,19 @@ ALTER TABLE `user_221061`
 -- AUTO_INCREMENT for table `customer_221061`
 --
 ALTER TABLE `customer_221061`
-  MODIFY `id_customer_221061` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id_customer_221061` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `jenis_cucian_221061`
 --
 ALTER TABLE `jenis_cucian_221061`
-  MODIFY `id_jenis_cucian_221061` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_jenis_cucian_221061` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `pendaftaran_221061`
 --
 ALTER TABLE `pendaftaran_221061`
-  MODIFY `id_pendaftaran_221061` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id_pendaftaran_221061` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `rating_221061`
@@ -231,7 +215,7 @@ ALTER TABLE `rating_221061`
 -- AUTO_INCREMENT for table `transaksi_221061`
 --
 ALTER TABLE `transaksi_221061`
-  MODIFY `id_transaksi_221061` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_transaksi_221061` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `user_221061`
