@@ -83,7 +83,7 @@ session_start();
                                             <ul id="navigation">                                                                                          
                                                 <li><a href="index.php">Home</a></li>
                                                 <li><a href="about.php">About</a></li>
-                                                <li><a href="booking.php">Booking</a></li>
+                                                <li><a href="layanan.php">Layanan</a></li>
                                                 <li><a href="contact.php">Contact</a></li>
                                             </ul>
                                         </nav>
@@ -205,7 +205,7 @@ session_start();
                                         <li><?= $text ?></li>
                                     <?php endforeach; ?>
                                 </ul>
-                                <a href="booking.php" class="borders-btn">Booking Sekarang</a>
+                                <a href="booking.php?layanan_id=<?= $data['id_jenis_cucian_221061'] ?>" class="borders-btn">Booking Sekarang</a>
                             </div>
                         </div>
                     </div>

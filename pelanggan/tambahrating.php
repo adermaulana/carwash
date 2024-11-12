@@ -184,7 +184,7 @@ if (isset($_POST['simpan'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../booking.php">
+              <a class="nav-link" href="../layanan.php">
                 <span class="menu-title">Pesan Layanan</span>
                 <i class="mdi mdi-account-group menu-icon"></i>
               </a>

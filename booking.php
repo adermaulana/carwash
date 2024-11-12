@@ -89,7 +89,7 @@ if(isset($_SESSION['status']) != 'login'){
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?= $namaPelanggan ?></title>
+    <title>Car Wash - Booking</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -146,7 +146,7 @@ if(isset($_SESSION['status']) != 'login'){
                                             <ul id="navigation">                                                                                          
                                                 <li><a href="index.php">Home</a></li>
                                                 <li><a href="about.php">About</a></li>
-                                                <li><a href="booking.php">Booking</a></li>
+                                                <li><a href="layanan.php">Layanan</a></li>
                                                 <li><a href="contact.php">Contact</a></li>
                                             </ul>
                                         </nav>
@@ -226,24 +226,15 @@ if(isset($_SESSION['status']) != 'login'){
                             <div class="col-sm-6">
                                 <label for="" style="margin-left:17px;"><strong>Jenis Layanan</strong></label>
                                 <div class="form-group">
-                                <select name="id_jenis_cucian_221061" id="layanan" class="form-select" required>
-                                    <option  disabled selected>Pilih Layanan</option>
-                                    <?php
-                                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
-                                            while($data = mysqli_fetch_array($tampil)):
-                                        ?>
-                                    <option value="<?= $data['id_jenis_cucian_221061'] ?>" data-kuota="<?= $data['kuota_221061'] ?>" data-harga="<?= $data['biaya_221061'] ?>"><?= $data['jenis_cucian_221061'] ?></option>
-                                    <?php
-                                        endwhile; 
-                                    ?>
-                                </select>
+                                    <input type="text" name="jenis_layanan" id="jenis_layanan" class="form-control" readonly>
+                                    <input type="hidden" name="id_jenis_cucian_221061" id="id_jenis_cucian_221061" required>
                                     <small id="quotaMessage" style="color:red;"></small>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="" style="margin-left:17px;"><strong>Harga</strong></label>
-                                    <input type="hidden" name="total_biaya_221061">
+                                    <input type="hidden" name="total_biaya_221061" id="total_biaya_221061">
                                     <input class="form-control" name="hargaDisplay" id="harga" type="text" readonly>
                                 </div>
                             </div>
@@ -457,37 +448,16 @@ if(isset($_SESSION['status']) != 'login'){
 
 
 <script>
-    $(document).ready(function() {
-        let isQuotaAvailable = true; // Variabel untuk melacak status kuota
-
-        $('#layanan').change(function() {
-            const selectedOption = $(this).find('option:selected');
-            const availableQuota = selectedOption.data('kuota'); // Sesuaikan nama data sesuai dengan HTML
-
-            // Mengupdate pesan kuota
-            const quotaMessage = $('#quotaMessage');
-
-            // Mengecek apakah kuota tersedia
-            if (availableQuota > 0) {
-                quotaMessage.text(`Kuota tersedia: ${availableQuota}`).css('color', 'green');
-                isQuotaAvailable = true; // Set kuota tersedia
-            } else {
-                quotaMessage.text('Maaf, kuota tidak tersedia untuk jenis layanan ini.').css('color', 'red');
-                isQuotaAvailable = false; // Set kuota tidak tersedia
-            }
-        });
-
-        // Menangani event tombol kirim
-        $('.button-contactForm').click(function(event) {
-            if (!isQuotaAvailable) {
-                event.preventDefault(); // Mencegah form submit
-                alert('Kuota tidak tersedia. Silakan pilih layanan lain.');
-            }
-        });
-    });
-</script>
-
-<script type="text/javascript">
+$(document).ready(function() {
+    let isQuotaAvailable = true;
+    
+    // Fungsi untuk mendapatkan parameter dari URL
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
 
     function formatRupiah(angka) {
       var number_string = angka.toString().replace(/[^,\d]/g, ''),
@@ -504,22 +474,58 @@ if(isset($_SESSION['status']) != 'login'){
 
       return rupiah; // hasilnya tanpa simbol Rp
     }
+    
+    // Fungsi untuk mengambil data layanan berdasarkan ID
+    function getLayananData(id_layanan) {
+        $.ajax({
+            url: 'get_layanan.php',
+            method: 'POST',
+            data: { id_layanan: id_layanan },
+            dataType: 'json',
+            success: function(response) {
+                if(response) {
+                    $('#jenis_layanan').val(response.jenis_cucian_221061);
+                    $('#id_jenis_cucian_221061').val(response.id_jenis_cucian_221061);
+                    $('#harga').val(`Rp ${formatRupiah(response.biaya_221061)}`);
+                    $('#total_biaya_221061').val(response.biaya_221061);
+                    
+                    // Mengupdate pesan kuota
+                    const quotaMessage = $('#quotaMessage');
+                    if (response.kuota_221061 > 0) {
+                        quotaMessage.text(`Kuota tersedia: ${response.kuota_221061}`).css('color', 'green');
+                        isQuotaAvailable = true;
+                    } else {
+                        quotaMessage.text('Maaf, kuota tidak tersedia untuk jenis layanan ini.').css('color', 'red');
+                        isQuotaAvailable = false;
+                    }
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan saat mengambil data layanan');
+            }
+        });
+    }
 
+    // Mendapatkan layanan_id dari URL dan memanggil fungsi getLayananData
+    const layanan_id = getUrlParameter('layanan_id');
+    if(layanan_id) {
+        getLayananData(layanan_id);
+    } else {
+        // Jika tidak ada ID di URL, tampilkan pesan atau redirect
+        alert('ID Layanan tidak ditemukan');
+        redirect: window.location.href = 'layanan.php';
+    }
 
-
-    $('#layanan').on('change', function(){
-    // ambil data dari elemen option yang dipilih
-    const harga = $('#layanan option:selected').data('harga');
-
-    // tampilkan data ke element
-    $('[name=hargaDisplay]').val(`Rp ${formatRupiah(harga)}`);
-    $('[name=total_biaya_221061]').val(`${harga}`);
-
-  
-
+    // Menangani event tombol kirim
+    $('.button-contactForm').click(function(event) {
+        if (!isQuotaAvailable) {
+            event.preventDefault();
+            alert('Kuota tidak tersedia. Silakan pilih layanan lain.');
+        }
     });
+});
+</script>
 
-    </script>
 
 
 </body>

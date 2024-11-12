@@ -4,17 +4,21 @@ include 'koneksi.php';
 
 session_start();
 
+
   if(isset($_SESSION['username_admin'])) {
     $isLoggedIn = true;
     $namaAdmin = $_SESSION['nama_admin']; // Ambil nama user dari session
   } else if(isset($_SESSION['username_pelanggan'])) {
     $isLoggedIn = true;
-    $namaPelanggan = $_SESSION['nama_pelanggan']; // Ambil nama user dari session
+    $namaPelanggan = $_SESSION['nama_pelanggan'];
+    $teleponPelanggan = $_SESSION['telepon_pelanggan'];
+    $alamatPelanggan = $_SESSION['alamat_pelanggan'];
   } 
 
   else {
       $isLoggedIn = false;
   }
+
 
 
 ?>
@@ -25,7 +29,7 @@ session_start();
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Car wash</title>
+    <title>Car Wash - Booking</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -121,7 +125,7 @@ session_start();
                         <div class="row">
                             <div class="col-xl-12">
                                 <div class="hero-cap hero-cap2">
-                                    <h2>About</h2>
+                                    <h2>Layanan Kami</h2>
                                 </div>
                             </div>
                         </div>
@@ -129,69 +133,84 @@ session_start();
                 </div>
             </div>
         </div>
-        <!-- Hero End -->
-
-        <!--? Services Area Start -->
-        <section class="categories-area section-padding40">
+        <!--?  Contact Area start  -->
+        <section class="pricing-card-area fix section-padding30">
             <div class="container">
-                <!-- section Tittle -->
+
                 <div class="row">
-                    <div class="col-xl-6 col-lg-7 col-md-10 col-sm-11">
-                        <div class="section-tittle mb-60">
-                        <h2>Mengapa memilih layanan kami?</h2>
-                        <p>Kami berkomitmen untuk memberikan pelayanan terbaik dengan kualitas yang dapat diandalkan. Kami selalu mengutamakan kepuasan pelanggan dan menjamin hasil yang memuaskan di setiap layanan kami.</p>
+                    <?php
+                        $no = 1;
+                        $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+
+                        // Array berisi kalimat-kalimat random untuk card-bottom
+                        $random_texts = [
+                            [
+                                "Cuci body mobil dengan sabun khusus.",
+                                "Pembersihan kaca dan cermin.",
+                                "Pembersihan velg dan ban.",
+                                "Pengeringan dengan lap microfiber untuk menghindari goresan.",
+                                "Pengilapan ringan pada body mobil."
+                            ],
+                            [
+                                "Membersihkan bagian dalam mobil.",
+                                "Pembersihan lantai dan jok mobil.",
+                                "Penghilangan bau tidak sedap.",
+                                "Desinfeksi dengan alat khusus.",
+                                "Poles dashboard dan stir mobil."
+                            ],
+                            [
+                                "Pembersihan eksterior dengan cairan khusus.",
+                                "Perawatan kaca spion dan lampu.",
+                                "Pembersihan sela-sela body.",
+                                "Penghilangan noda yang membandel.",
+                                "Pengeringan cepat dengan lap khusus."
+                            ],
+                        ];
+
+                        while ($data = mysqli_fetch_array($tampil)):
+                            // Pilih teks acak dari array $random_texts
+                            $chosen_texts = $random_texts[array_rand($random_texts)];
+                    ?>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-10">
+                        <div class="single-card text-center mb-30">
+                            <div class="card-top">
+                                <img src="assets/home/img/icon/price1.svg" alt="">
+                                <h4><?= $data['jenis_cucian_221061'] ?></h4>
+                            </div>
+                            <div class="card-mid">
+                                <h4>Rp <?= number_format($data['biaya_221061'], 0, ',', '.') ?></h4>
+                            </div>
+                            <div class="card-bottom">
+                                <ul>
+                                    <?php foreach ($chosen_texts as $text): ?>
+                                        <li><?= $text ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <a href="booking.php?layanan_id=<?= $data['id_jenis_cucian_221061'] ?>" class="borders-btn">Booking Sekarang</a>
+                            </div>
                         </div>
                     </div>
+                    <?php
+                        endwhile; 
+                    ?>
                 </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="single-cat mb-50 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".2s">
-                            <div class="cat-icon">
-                                <img src="assets/img/icon/services1.svg" alt="">
-                            </div>
-                            <div class="cat-cap">
-                                <h5>Membersihkan Mobil Tanpa Deterjen</h5>
-                                <p>Kami menggunakan metode pembersihan yang ramah lingkungan dan efektif tanpa penggunaan deterjen, sehingga mobil Anda tetap bersih dan aman.</p>
-                            </div>
-                        </div>
+
+            </div>
+        </section>
+        <!-- Contact Area End -->
+        <!-- Map -->
+        <div class="maps-area maps-area2">
+            <div class="container">
+                <div class="row no-gutters">
+                    <div class="col-lg-7 col-md-7 col-sm-7">
+                        <img src="assets/img/gallery/map.png" alt="" class="w-100">
                     </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="single-cat mb-50 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".2s">
-                            <div class="cat-icon">
-                                <img src="assets/img/icon/services2.svg" alt="">
-                            </div>
-                            <div class="cat-cap">
-                                <h5>Mesin Pengering Permukaan yang Efisien</h5>
-                                <p>Kami menggunakan mesin pengering yang efisien untuk memastikan mobil Anda kering tanpa noda air, memberikan hasil akhir yang sempurna.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="single-cat mb-50 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".4s">
-                            <div class="cat-icon">
-                                <img src="assets/img/icon/services3.svg" alt="">
-                            </div>
-                            <div class="cat-cap">
-                                <h5>Aplikasi untuk Kemudahan Anda</h5>
-                                <p>Dengan aplikasi kami, Anda dapat memesan layanan cuci mobil dengan mudah, mengatur jadwal, dan melacak status layanan Anda secara real-time.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="single-cat mb-50 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".5s">
-                            <div class="cat-icon">
-                                <img src="assets/img/icon/services4.svg" alt="">
-                            </div>
-                            <div class="cat-cap">
-                                <h5>Perlindungan Lapis Cat yang Aman</h5>
-                                <p>Kami menawarkan layanan perlindungan lapis cat yang aman, menjaga penampilan mobil Anda tetap baru dan terlindungi dari elemen eksternal.</p>
-                            </div>
-                        </div>
+                    <div class="col-lg-5 col-md-5 col-sm-5">
+                        <img src="assets/img/gallery/map-left.png" alt="" class="w-100">
                     </div>
                 </div>
             </div>
-        </section>
-        <!--? Services Area End -->
+        </div>
     </main>
     <footer>
         <div class="footer-wrapper section-bg2"  data-background="assets/home/img/gallery/footer-bg.png">
@@ -274,6 +293,7 @@ session_start();
 
 <!-- JS here -->
 
+
 <script src="assets/home/js/vendor/modernizr-3.5.0.min.js"></script>
 <!-- Jquery, Popper, Bootstrap -->
 <script src="assets/home/js/vendor/jquery-1.12.4.min.js"></script>
@@ -314,6 +334,111 @@ session_start();
 <!-- Jquery Plugins, main Jquery -->	
 <script src="assets/home/js/plugins.js"></script>
 <script src="assets/home/js/main.js"></script>
+
+<script>
+    document.querySelector(".form-contact").addEventListener("submit", function(event) {
+        // Mengambil elemen form
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const layanan = document.getElementById("layanan").value;
+        const hargaDisplay = document.getElementById("harga").value.trim();
+
+        // Validasi setiap input, jika kosong tampilkan alert dan batalkan submit
+        if (name === "") {
+            alert("Nama tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (phone === "") {
+            alert("Nomor telepon tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (address === "") {
+            alert("Alamat tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+        if (layanan === null || layanan === "Pilih Layanan") {
+            alert("Silakan pilih jenis layanan.");
+            event.preventDefault();
+            return;
+        }
+        if (hargaDisplay === "") {
+            alert("Harga tidak boleh kosong.");
+            event.preventDefault();
+            return;
+        }
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        let isQuotaAvailable = true; // Variabel untuk melacak status kuota
+
+        $('#layanan').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const availableQuota = selectedOption.data('kuota'); // Sesuaikan nama data sesuai dengan HTML
+
+            // Mengupdate pesan kuota
+            const quotaMessage = $('#quotaMessage');
+
+            // Mengecek apakah kuota tersedia
+            if (availableQuota > 0) {
+                quotaMessage.text(`Kuota tersedia: ${availableQuota}`).css('color', 'green');
+                isQuotaAvailable = true; // Set kuota tersedia
+            } else {
+                quotaMessage.text('Maaf, kuota tidak tersedia untuk jenis layanan ini.').css('color', 'red');
+                isQuotaAvailable = false; // Set kuota tidak tersedia
+            }
+        });
+
+        // Menangani event tombol kirim
+        $('.button-contactForm').click(function(event) {
+            if (!isQuotaAvailable) {
+                event.preventDefault(); // Mencegah form submit
+                alert('Kuota tidak tersedia. Silakan pilih layanan lain.');
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    function formatRupiah(angka) {
+      var number_string = angka.toString().replace(/[^,\d]/g, ''),
+          split = number_string.split(','),
+          sisa = split[0].length % 3,
+          rupiah = split[0].substr(0, sisa),
+          ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+      // Tambahkan titik jika angka lebih dari ribuan
+      if (ribuan) {
+          separator = sisa ? '.' : '';
+          rupiah += separator + ribuan.join('.');
+      }
+
+      return rupiah; // hasilnya tanpa simbol Rp
+    }
+
+
+
+    $('#layanan').on('change', function(){
+    // ambil data dari elemen option yang dipilih
+    const harga = $('#layanan option:selected').data('harga');
+
+    // tampilkan data ke element
+    $('[name=hargaDisplay]').val(`Rp ${formatRupiah(harga)}`);
+    $('[name=total_biaya_221061]').val(`${harga}`);
+
+  
+
+    });
+
+    </script>
+
 
 </body>
 </html>

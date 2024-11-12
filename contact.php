@@ -83,7 +83,7 @@ session_start();
                                             <ul id="navigation">                                                                                          
                                                 <li><a href="index.php">Home</a></li>
                                                 <li><a href="about.php">About</a></li>
-                                                <li><a href="booking.php">Booking</a></li>
+                                                <li><a href="layanan.php">Layanan</a></li>
                                                 <li><a href="contact.php">Contact</a></li>
                                             </ul>
                                         </nav>
