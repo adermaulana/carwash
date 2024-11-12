@@ -194,6 +194,7 @@ if(isset($_GET['hal']) == "hapus"){
                       <thead>
                         <tr>
                           <th>No</th>
+                          <th>Nama Customer</th>
                           <th>Nama Layanan</th>
                           <th>Rating</th>
                           <th>Deskripsi</th>
@@ -202,15 +203,16 @@ if(isset($_GET['hal']) == "hapus"){
                       <tbody>
                       <?php
                             $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT r.*, j.*
+                            $tampil = mysqli_query($koneksi, "SELECT r.*, j.*, c.nama_221061
                                                               FROM rating_221061 r
                                                               JOIN jenis_cucian_221061 j ON r.id_jenis_cucian_221061 = j.id_jenis_cucian_221061
-                                                              WHERE r.id_customer_221061 = '$_SESSION[id_pelanggan]';
+                                                              JOIN customer_221061 c ON r.id_customer_221061 = c.id_customer_221061;
                                                               ");
                             while($data = mysqli_fetch_array($tampil)):
                         ?>
                         <tr>
                           <td><?= $no++ ?></td>
+                          <td><?= $data['nama_221061'] ?></td>
                           <td><?= $data['jenis_cucian_221061'] ?></td>
                           <?php $rating = (int)$data['rating_221061'];
                           echo '<td>';
