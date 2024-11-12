@@ -157,84 +157,63 @@ session_start();
                     </div>
                 </div>
                 <div class="row">
+                    <?php
+                        $no = 1;
+                        $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+
+                        // Array berisi kalimat-kalimat random untuk card-bottom
+                        $random_texts = [
+                            [
+                                "Cuci body mobil dengan sabun khusus.",
+                                "Pembersihan kaca dan cermin.",
+                                "Pembersihan velg dan ban.",
+                                "Pengeringan dengan lap microfiber untuk menghindari goresan.",
+                                "Pengilapan ringan pada body mobil."
+                            ],
+                            [
+                                "Membersihkan bagian dalam mobil.",
+                                "Pembersihan lantai dan jok mobil.",
+                                "Penghilangan bau tidak sedap.",
+                                "Desinfeksi dengan alat khusus.",
+                                "Poles dashboard dan stir mobil."
+                            ],
+                            [
+                                "Pembersihan eksterior dengan cairan khusus.",
+                                "Perawatan kaca spion dan lampu.",
+                                "Pembersihan sela-sela body.",
+                                "Penghilangan noda yang membandel.",
+                                "Pengeringan cepat dengan lap khusus."
+                            ],
+                        ];
+
+                        while ($data = mysqli_fetch_array($tampil)):
+                            // Pilih teks acak dari array $random_texts
+                            $chosen_texts = $random_texts[array_rand($random_texts)];
+                    ?>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-10">
                         <div class="single-card text-center mb-30">
                             <div class="card-top">
                                 <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Cuci Mobil</h4>
-                                <p>Mulai dari</p>
+                                <h4><?= $data['jenis_cucian_221061'] ?></h4>
                             </div>
                             <div class="card-mid">
-                                <h4>Rp 50.000</h4>
+                                <h4>Rp <?= number_format($data['biaya_221061'], 0, ',', '.') ?></h4>
                             </div>
                             <div class="card-bottom">
                                 <ul>
-                                    <li>Cuci body mobil dengan sabun khusus.
-                                    </li>
-                                    <li>Pembersihan kaca dan cermin.
-                                    </li>
-                                    <li>Pembersihan velg dan ban.
-                                    </li>
-                                    <li>Pengeringan dengan lap microfiber untuk menghindari goresan.
-                                    </li>
-                                    <li>Pengilapan ringan pada body mobil.</li>
+                                    <?php foreach ($chosen_texts as $text): ?>
+                                        <li><?= $text ?></li>
+                                    <?php endforeach; ?>
                                 </ul>
                                 <a href="booking.php" class="borders-btn">Booking Sekarang</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-10">
-                        <div class="single-card text-center mb-30">
-                            <div class="card-top">
-                                <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Detailing</h4>
-                                <p>Mulai dari</p>
-                            </div>
-                            <div class="card-mid">
-                                <h4>Rp 100.000</h4>
-                            </div>
-                            <div class="card-bottom">
-                            <ul>
-                                <li>Pembersihan mendalam pada bagian interior dan eksterior.
-                                </li>
-                                <li>Vakum interior (kursi, karpet, dan bagasi).
-                                </li>
-                                <li>Pembersihan panel pintu, dashboard, dan jok.
-                                </li>
-                                <li>Pembersihan celah-celah dan area yang sulit dijangkau.
-                                </li>
-                                <li>Penggunaan bahan khusus untuk mengilapkan dashboard dan permukaan plastik lainnya.
-                                </li>
-                                <li>Pengilapan eksterior dengan wax atau pelindung lainnya untuk hasil akhir yang berkilau.
-                                </li>
-                            </ul>
-                                <a href="booking.php" class="borders-btn">Booking Sekarang</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-10">
-                        <div class="single-card text-center mb-30">
-                            <div class="card-top">
-                                <img src="assets/home/img/icon/price1.svg" alt="">
-                                <h4>Cuci & Detailing</h4>
-                                <p>Mulai dari</p>
-                            </div>
-                            <div class="card-mid">
-                                <h4>Rp 200.000</h4>
-                            </div>
-                            <div class="card-bottom">
-                            <ul>
-                                <li>Pembersihan menyeluruh untuk eksterior dan interior.
-                                </li>
-                                <li>Penanganan mendetail pada setiap bagian mobil (termasuk vakum, wax, dan pelindung tambahan).
-                                </li>
-                                <li>Finishing dengan pelindung ekstra agar mobil tetap bersih dan berkilau lebih lama.</li>
-                            </ul>
-                                <a href="booking.php" class="borders-btn">Booking Sekarang</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php
+                        endwhile; 
+                    ?>
                 </div>
+
             </div>
         </section>
         <!-- Pricing Card End -->
