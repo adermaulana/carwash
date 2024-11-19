@@ -47,6 +47,18 @@ session_start();
     <link rel="stylesheet" href="assets/home/css/slick.css">
     <link rel="stylesheet" href="assets/home/css/nice-select.css">
     <link rel="stylesheet" href="assets/home/css/style.css">
+
+    <style>
+
+        .card-top img {
+        width: 100%;
+        height: 300px; /* Ukuran tetap untuk semua gambar */
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        }
+
+    </style>
 </head>
 
 <body class="full-wrapper">
@@ -193,7 +205,7 @@ session_start();
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-10">
                         <div class="single-card text-center mb-30">
                             <div class="card-top">
-                                <img src="assets/home/img/icon/price1.svg" alt="">
+                                <img src="admin/uploads/<?= $data['gambar_221061'] ?>" alt="" >
                                 <h4><?= $data['jenis_cucian_221061'] ?></h4>
                             </div>
                             <div class="card-mid">

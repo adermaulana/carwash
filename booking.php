@@ -30,53 +30,87 @@ if(isset($_SESSION['status']) != 'login'){
       $isLoggedIn = false;
   }
 
+  $id_layanan = $_GET['layanan_id'];
+
 
   if (isset($_POST['simpan'])) {
-    // Query untuk menyimpan data ke tabel pendaftaran_221061
-    $simpan = mysqli_query($koneksi, "INSERT INTO pendaftaran_221061 (id_customer_221061, id_jenis_cucian_221061, tgl_pendaftaran_221061, total_biaya_221061, status_221061) VALUES ('{$_POST['id_customer_221061']}', '{$_POST['id_jenis_cucian_221061']}', '{$_POST['tgl_pendaftaran_221061']}', '{$_POST['total_biaya_221061']}', 'Pending')");
+    // Cek apakah tanggal dan jam sudah ada di database
+    $cek_jadwal = mysqli_query($koneksi, "SELECT * FROM pendaftaran_221061 
+                                         WHERE tgl_pendaftaran_221061 = '{$_POST['tgl_pendaftaran_221061']}' 
+                                         AND jam_pendaftaran_221061 = '{$_POST['jam_pendaftaran_221061']}'");
+    
+    if (mysqli_num_rows($cek_jadwal) > 0) {
+        // Jika jadwal sudah ada
+        echo "<script>
+                alert('Maaf, jadwal pada tanggal dan jam tersebut sudah terisi. Silahkan pilih waktu lain!');
+                document.location='booking.php?layanan_id=" . $id_layanan . "';
+              </script>";
+    } else {
+        // Jika jadwal tersedia, lanjutkan proses booking
+        $simpan = mysqli_query($koneksi, "INSERT INTO pendaftaran_221061 
+                                         (id_customer_221061, id_jenis_cucian_221061, 
+                                          tgl_pendaftaran_221061, jam_pendaftaran_221061, 
+                                          total_biaya_221061, status_221061) 
+                                         VALUES 
+                                         ('{$_POST['id_customer_221061']}', 
+                                          '{$_POST['id_jenis_cucian_221061']}', 
+                                          '{$_POST['tgl_pendaftaran_221061']}',
+                                          '{$_POST['jam_pendaftaran_221061']}', 
+                                          '{$_POST['total_biaya_221061']}', 
+                                          'Pending')");
 
-    if ($simpan) {
-        // Ambil ID pendaftaran yang baru saja dimasukkan
-        $id_pendaftaran = mysqli_insert_id($koneksi);
+        if ($simpan) {
+            // Ambil ID pendaftaran yang baru saja dimasukkan
+            $id_pendaftaran = mysqli_insert_id($koneksi);
 
-        // Generate nilai untuk no_nota_221061
-        $no_nota = "NOTA-" . date("Ymd") . "-" . $id_pendaftaran; // Contoh format: NOTA-20241027-1
+            // Generate nilai untuk no_nota_221061
+            $no_nota = "NOTA-" . date("Ymd") . "-" . $id_pendaftaran;
 
-        // Data untuk tabel transaksi
-        $tanggal_transaksi = date("Y-m-d"); // atau gunakan tanggal yang sesuai kebutuhan
-        $status_transaksi = "Pending"; // contoh status awal
-        $bukti_pembayaran = ""; // kosongkan jika belum ada bukti
+            // Data untuk tabel transaksi
+            $tanggal_transaksi = date("Y-m-d");
+            $status_transaksi = "Pending";
+            $bukti_pembayaran = "";
 
-        // Query untuk memasukkan data ke tabel transaksi_221061
-        $transaksi = mysqli_query($koneksi, "INSERT INTO transaksi_221061 (id_pendaftaran_221061, no_nota_221061, tanggal_221061, status_221061, bukti_pembayaran_221061) VALUES ('$id_pendaftaran', '$no_nota', '$tanggal_transaksi', '$status_transaksi', '$bukti_pembayaran')");
+            // Query untuk memasukkan data ke tabel transaksi_221061
+            $transaksi = mysqli_query($koneksi, "INSERT INTO transaksi_221061 
+                                                (id_pendaftaran_221061, no_nota_221061, 
+                                                 tanggal_221061, status_221061, 
+                                                 bukti_pembayaran_221061) 
+                                                VALUES 
+                                                ('$id_pendaftaran', '$no_nota', 
+                                                 '$tanggal_transaksi', '$status_transaksi', 
+                                                 '$bukti_pembayaran')");
 
-        if ($transaksi) {
-            // Kurangi kuota di tabel jenis_cucian_221061
-            $id_jenis_cucian = $_POST['id_jenis_cucian_221061'];
-            $kurangiKuota = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET kuota_221061 = kuota_221061 - 1 WHERE id_jenis_cucian_221061 = '$id_jenis_cucian'");
+            if ($transaksi) {
+                // Kurangi kuota di tabel jenis_cucian_221061
+                $id_jenis_cucian = $_POST['id_jenis_cucian_221061'];
+                $kurangiKuota = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 
+                                                       SET kuota_221061 = kuota_221061 - 1 
+                                                       WHERE id_jenis_cucian_221061 = '$id_jenis_cucian'");
 
-            if ($kurangiKuota) {
-                echo "<script>
-                        alert('Berhasil booking, segera lakukan pembayaran!');
-                        document.location='pelanggan';
-                      </script>";
+                if ($kurangiKuota) {
+                    echo "<script>
+                            alert('Berhasil booking, segera lakukan pembayaran!');
+                            document.location='pelanggan';
+                          </script>";
+                } else {
+                    echo "<script>
+                            alert('Booking berhasil, tapi gagal mengurangi kuota!');
+                            document.location='pelanggan';
+                          </script>";
+                }
             } else {
                 echo "<script>
-                        alert('Booking berhasil, tapi gagal mengurangi kuota!');
-                        document.location='pelanggan';
+                        alert('Simpan data gagal di tabel transaksi!');
+                        document.location='booking.php';
                       </script>";
             }
         } else {
             echo "<script>
-                    alert('Simpan data gagal di tabel transaksi!');
+                    alert('Simpan data gagal di tabel pendaftaran!');
                     document.location='booking.php';
                   </script>";
         }
-    } else {
-        echo "<script>
-                alert('Simpan data gagal di tabel pendaftaran!');
-                document.location='booking.php';
-              </script>";
     }
 }
 
@@ -180,7 +214,7 @@ if(isset($_SESSION['status']) != 'login'){
         <!--? Hero Start -->
         <div class="container-fluid">
             <div class="slider-area2">
-                <div class="slider-height2 hero-overly d-flex align-items-center">
+            <div class="slider-height2 hero-overly d-flex align-items-center">
                     <div class="container">
                         <div class="row">
                             <div class="col-xl-12">
@@ -201,7 +235,7 @@ if(isset($_SESSION['status']) != 'login'){
                         <h2 class="contact-title">Booking Sekarang Juga</h2>
                     </div>
                     <div class="col-lg-8">
-                    <form class="form-contact contact_form" method="post">
+                    <form class="form-contact contact_form" method="post" >
                         <input type="hidden" name="id_customer_221061" value="<?= $_SESSION['id_pelanggan'] ?>">
                         <input type="hidden" name="tgl_pendaftaran_221061" value="<?= date("Y-m-d") ?>">
                         <div class="row">
@@ -229,6 +263,32 @@ if(isset($_SESSION['status']) != 'login'){
                                     <input type="text" name="jenis_layanan" id="jenis_layanan" class="form-control" readonly>
                                     <input type="hidden" name="id_jenis_cucian_221061" id="id_jenis_cucian_221061" required>
                                     <small id="quotaMessage" style="color:red;"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="" style="margin-left:17px;"><strong>Tanggal Booking</strong></label>
+                                    <input class="form-control" name="tgl_pendaftaran_221061" id="tgl_pendaftaran_221061" type="date" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label style="margin-left:17px;"><strong>Jam Booking</strong></label>
+                                    <select class="form-select" name="jam_pendaftaran_221061" id="jamBooking" required onchange="validateSelection()">
+                                        <option value="" disabled selected>Pilih Jam</option>
+                                        <?php
+                                            $no = 1;
+                                            $tampil = mysqli_query($koneksi, "SELECT *, DATE_FORMAT(jam_221061, '%H.%i') as jam_format FROM slot_waktu_221061 ORDER BY jam_221061 ASC");
+                                            while($data = mysqli_fetch_array($tampil)):
+                                        ?>
+                                        <option value="<?= $data['jam_221061'] ?>"><?= $data['jam_format'] ?></option>
+                                        <?php
+                                            endwhile; 
+                                        ?>
+                                    </select>
+                                    <div class="invalid-feedback" id="jamAlert" style="display: none;">
+                                        Silahkan pilih jam booking terlebih dahulu!
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -526,6 +586,32 @@ $(document).ready(function() {
 });
 </script>
 
+<script>
+
+document.querySelector('form').setAttribute('novalidate', '');
+
+function validateSelection() {
+    const selectElement = document.getElementById('jamBooking');
+    const alertElement = document.getElementById('jamAlert');
+    
+    if (!selectElement.value) {
+        alertElement.style.display = 'block';
+        selectElement.classList.add('is-invalid');
+        return false;
+    } else {
+        alertElement.style.display = 'none';
+        selectElement.classList.remove('is-invalid');
+        return true;
+    }
+}
+
+// Validate on form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!validateSelection()) {
+        e.preventDefault(); // Prevent form submission if validation fails
+    }
+});
+</script>
 
 
 </body>

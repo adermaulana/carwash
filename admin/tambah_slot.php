@@ -13,45 +13,51 @@ if($_SESSION['status'] != 'login'){
 
 }
 
-if (isset($_POST['simpan'])) {
-  // Query untuk menyimpan data ke tabel pendaftaran_221061
-  $simpan = mysqli_query($koneksi, "INSERT INTO pendaftaran_221061 (id_customer_221061, id_jenis_cucian_221061, tgl_pendaftaran_221061, total_biaya_221061, status_221061) VALUES ('{$_POST['id_customer_221061']}', '{$_POST['id_jenis_cucian_221061']}', '{$_POST['tgl_pendaftaran_221061']}', '{$_POST['total_biaya_221061']}', '{$_POST['status_221061']}')");
-
-  if ($simpan) {
-      // Ambil ID pendaftaran yang baru saja dimasukkan
-      $id_pendaftaran = mysqli_insert_id($koneksi);
-
-      // Generate nilai untuk no_nota_221061
-      $no_nota = "NOTA-" . date("Ymd") . "-" . $id_pendaftaran; // Contoh format: NOTA-20241027-1
-
-      // Data untuk tabel transaksi
-      $tanggal_transaksi = date("Y-m-d"); // atau gunakan tanggal yang sesuai kebutuhan
-      $status_transaksi = "Pending"; // contoh status awal
-      $bukti_pembayaran = ""; // kosongkan jika belum ada bukti
-      $id_admin = $_SESSION['id_admin']; // ganti dengan ID admin yang sesuai atau sesuai kebutuhan
-
-      // Query untuk memasukkan data ke tabel transaksi_221061
-      $transaksi = mysqli_query($koneksi, "INSERT INTO transaksi_221061 (id_pendaftaran_221061, no_nota_221061, tanggal_221061, status_221061, bukti_pembayaran_221061, id_user_221061) VALUES ('$id_pendaftaran', '$no_nota', '$tanggal_transaksi', '$status_transaksi', '$bukti_pembayaran', '$id_admin')");
-
-      if ($transaksi) {
-          echo "<script>
-                  alert('Simpan data sukses!');
-                  document.location='booking.php';
-                </script>";
-      } else {
-          echo "<script>
-                  alert('Simpan data gagal di tabel transaksi!');
-                  document.location='booking.php';
-                </script>";
-      }
-  } else {
-      echo "<script>
-              alert('Simpan data gagal di tabel pendaftaran!');
-              document.location='booking.php';
-            </script>";
-  }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $jam = $_POST['jam_221061'];
+    
+    // Memisahkan jam dan menit
+    $time_parts = explode(':', $jam);
+    $minutes = $time_parts[1];
+    
+    // Cek apakah menit = 00
+    if($minutes != "00") {
+        echo "<script>
+                alert('Mohon masukkan jam bulat (contoh: 12:00, 13:00)');
+                window.location.href='slotwaktu.php';
+              </script>";
+        exit;
+    }
+    
+    // Cek apakah jam sudah ada di database
+    $check_query = "SELECT * FROM slot_waktu_221061 WHERE jam_221061 = '$jam'";
+    $check_result = mysqli_query($koneksi, $check_query);
+    
+    if(mysqli_num_rows($check_result) > 0) {
+        echo "<script>
+                alert('Slot waktu ini sudah ada dalam sistem');
+                window.location.href='tambah_slot.php';
+              </script>";
+        exit;
+    }
+    
+    $status = $_POST['status_221061'];
+    
+    $query = "INSERT INTO slot_waktu_221061 (jam_221061, status_221061) 
+              VALUES ('$jam', '$status')";
+    
+    if (mysqli_query($koneksi, $query)) {
+        echo "<script>
+                alert('Slot waktu berhasil ditambahkan');
+                window.location.href='slotwaktu.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Error: " . mysqli_error($koneksi) . "');
+                window.location.href='slotwaktu.php';
+              </script>";
+    }
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -60,7 +66,7 @@ if (isset($_POST['simpan'])) {
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Admin</title>
+    <title>Purple Admin</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="../assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../assets/vendors/ti-icons/css/themify-icons.css">
@@ -70,9 +76,6 @@ if (isset($_POST['simpan'])) {
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="../assets/vendors/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
-
-    <link rel="stylesheet" href="../assets/vendors/select2/select2.min.css">
-    <link rel="stylesheet" href="../assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
@@ -243,62 +246,27 @@ if (isset($_POST['simpan'])) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Tambah Booking</h3>
+              <h3 class="page-title">Tambah Waktu Pengerjaan</h3>
             </div>
             <div class="row">
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <form class="forms-sample" method="POST">
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Nama Pelanggan</label>
-                        <select name="id_customer_221061"  class="js-example-basic-single" style="width:100%" required>
-                        <?php
-                                $no = 1;
-                                $tampil = mysqli_query($koneksi, "SELECT * FROM customer_221061");
-                                while($data = mysqli_fetch_array($tampil)):
-                            ?>
-                          <option value="<?= $data['id_customer_221061'] ?>"><?= $data['nama_221061'] ?></option>
-                          <?php
-                            endwhile; 
-                        ?>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Layanan</label>
-                        <select name="id_jenis_cucian_221061" id="layanan" class="form-select" required>
-                          <option  disabled selected>Pilih Layanan</option>
-                          <?php
-                                $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
-                                while($data = mysqli_fetch_array($tampil)):
-                            ?>
-                          <option value="<?= $data['id_jenis_cucian_221061'] ?>" data-harga="<?= $data['biaya_221061'] ?>"><?= $data['jenis_cucian_221061'] ?></option>
-                          <?php
-                            endwhile; 
-                          ?>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Tanggal Booking</label>
-                        <input type="date" class="form-control" name="tgl_pendaftaran_221061" id="tgl_pendaftaran_221061" placeholder="Tanggal Booking" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Biaya</label>
-                        <input type="hidden" name="total_biaya_221061">
-                        <input type="text" class="form-control" name="displayBiaya" readonly>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Status</label>
-                        <select name="status_221061" class="form-select" required>
-                          <option disabled selected>Pilih</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Dalam Pengerjaan">Dalam Pengerjaan</option>
-                          <option value="Selesai">Selesai</option>
-                        </select>
-                      </div>
-                      <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="jam" class="form-label">Jam</label>
+                            <input type="time" class="form-control" id="jam" name="jam_221061" step="3600" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status_221061">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Nonaktif">Nonaktif</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
-                  </div>
+                </div>
                 </div>
               </div>
             </div>
@@ -322,9 +290,7 @@ if (isset($_POST['simpan'])) {
     <script src="../assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
-    <script src="../assets/vendors/select2/select2.min.js"></script>
     <script src="../assets/vendors/chart.js/chart.umd.js"></script>
-    <script src="../assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="../assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- End plugin js for this page -->
     <!-- inject:js -->
@@ -336,44 +302,6 @@ if (isset($_POST['simpan'])) {
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="../assets/js/dashboard.js"></script>
-    <script src="../assets/js/select2.js"></script>
-    <script src="../assets/js/typeahead.js"></script>
     <!-- End custom js for this page -->
-
-    <script type="text/javascript">
-
-  function formatRupiah(angka) {
-    var number_string = angka.toString().replace(/[^,\d]/g, ''),
-        split = number_string.split(','),
-        sisa = split[0].length % 3,
-        rupiah = split[0].substr(0, sisa),
-        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-    // Tambahkan titik jika angka lebih dari ribuan
-    if (ribuan) {
-        separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-    }
-
-    return rupiah; // hasilnya tanpa simbol Rp
-  }
-
-
-
-    $('#layanan').on('change', function(){
-    // ambil data dari elemen option yang dipilih
-    const harga = $('#layanan option:selected').data('harga');
-
-    // tampilkan data ke element
-    $('[name=displayBiaya]').val(`Rp ${formatRupiah(harga)}`);
-    $('[name=total_biaya_221061]').val(`${harga}`);
-
-  
-
-    });
-
-    </script>
-
-
   </body>
 </html>

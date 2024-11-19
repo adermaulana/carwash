@@ -47,6 +47,7 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/lightbox/css/lightbox.min.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../assets/images/favicon.png" />
   </head>
@@ -189,6 +190,23 @@ if(isset($_GET['hal']) == "hapus"){
                 </ul>
               </div>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#waktu" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Waktu Pengerjaan</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+              </a>
+              <div class="collapse" id="waktu">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                    <a class="nav-link" href="slotwaktu.php">Lihat Waktu Pengerjaan</a>
+
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="tambah_slot.php">Tambah Waktu Pengerjaan</a>
+                    </li>
+                </ul>
+              </div>
+            </li>
           </ul>
         </nav>
         <!-- partial -->
@@ -205,34 +223,41 @@ if(isset($_GET['hal']) == "hapus"){
                     </p>
                     <table class="table">
                       <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>Nama Layanan</th>
-                          <th>Biaya</th>
-                          <th>Kuota</th>
-                          <th>Aksi</th>
-                        </tr>
+                          <tr>
+                              <th>No</th>
+                              <th>Gambar</th>
+                              <th>Nama Layanan</th>
+                              <th>Biaya</th>
+                              <th>Kuota</th>
+                              <th>Aksi</th>
+                          </tr>
                       </thead>
                       <tbody>
-                      <?php
-                            $no = 1;
-                            $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
-                            while($data = mysqli_fetch_array($tampil)):
-                        ?>
-                        <tr>
-                          <td><?= $no++ ?></td>
-                          <td><?= $data['jenis_cucian_221061'] ?></td>
-                          <td>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></td>
-                          <td><?= $data['kuota_221061'] ?></td>
-
-                          <td>
-                            <a href="editlayanan.php?hal=edit&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-warning text-decoration-none">Edit</a>
-                            <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">Hapus</a>
-                         </td>
-                        </tr>
-                        <?php
-                            endwhile; 
-                        ?>
+                          <?php
+                          $no = 1;
+                          $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061");
+                          while($data = mysqli_fetch_array($tampil)):
+                          ?>
+                          <tr>
+                              <td><?= $no++ ?></td>
+                              <td>
+                                  <?php if(!empty($data['gambar_221061'])): ?>
+                                      <a href="uploads/<?= $data['gambar_221061']; ?>" data-lightbox="gambar" data-title="Gambar">
+                                          <img src="uploads/<?= $data['gambar_221061']; ?>" alt="Gambar" width="100" height="100">
+                                      </a>
+                                  <?php else: ?>
+                                      <img src="path/to/default-image.jpg" alt="No Image" style="max-width: 100px;">
+                                  <?php endif; ?>
+                              </td>
+                              <td><?= $data['jenis_cucian_221061'] ?></td>
+                              <td>Rp. <?= number_format($data['biaya_221061'], 0, ',', '.') ?></td>
+                              <td><?= $data['kuota_221061'] ?></td>
+                              <td>
+                                  <a href="editlayanan.php?hal=edit&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-warning text-decoration-none">Edit</a>
+                                  <a href="layanan.php?hal=hapus&id=<?= $data['id_jenis_cucian_221061']?>" class="badge badge-danger text-decoration-none" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">Hapus</a>
+                              </td>
+                          </tr>
+                          <?php endwhile; ?>
                       </tbody>
                     </table>
                   </div>
@@ -272,5 +297,6 @@ if(isset($_GET['hal']) == "hapus"){
     <!-- Custom js for this page -->
     <script src="../assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
+    <script src="../assets/lightbox/js/lightbox-plus-jquery.js"></script>
   </body>
 </html>

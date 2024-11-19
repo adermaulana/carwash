@@ -14,20 +14,57 @@ if($_SESSION['status'] != 'login'){
 }
 
 if(isset($_POST['simpan'])){
-    $simpan = mysqli_query($koneksi, "INSERT INTO jenis_cucian_221061 (jenis_cucian_221061, biaya_221061, kuota_221061	
-) VALUES ('$_POST[nama]','$_POST[biaya]','$_POST[kuota]')");
+  // Handle image upload
+  $target_dir = "uploads/"; // Create this directory in your project
+  $file_name = basename($_FILES["gambar"]["name"]);
+  $target_file = $target_dir . $file_name;
+  $uploadOk = 1;
+  $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+  
+  // Check if image file is actual image or fake image
+  if(isset($_POST["submit"])) {
+      $check = getimagesize($_FILES["gambar"]["tmp_name"]);
+      if($check !== false) {
+          $uploadOk = 1;
+      } else {
+          $uploadOk = 0;
+      }
+  }
+  
+  // Check file size (limit to 5MB)
+  if ($_FILES["gambar"]["size"] > 5000000) {
+      echo "<script>alert('Maaf, ukuran file terlalu besar.');</script>";
+      $uploadOk = 0;
+  }
+  
+  // Allow certain file formats
+  if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+      echo "<script>alert('Maaf, hanya JPG, JPEG & PNG yang diperbolehkan.');</script>";
+      $uploadOk = 0;
+  }
 
-    if($simpan){
-        echo "<script>
-                alert('Simpan data sukses!');
-                document.location='layanan.php';
-            </script>";
-    } else {
-        echo "<script>
-                alert('Simpan data Gagal!');
-                document.location='layanan.php';
-            </script>";
-    }
+  if ($uploadOk == 1) {
+      if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+          // Insert data into database including image path
+          $simpan = mysqli_query($koneksi, "INSERT INTO jenis_cucian_221061 
+              (jenis_cucian_221061, biaya_221061, kuota_221061, gambar_221061) 
+              VALUES ('$_POST[nama]','$_POST[biaya]','$_POST[kuota]', '$file_name')");
+
+          if($simpan){
+              echo "<script>
+                      alert('Simpan data sukses!');
+                      document.location='layanan.php';
+                  </script>";
+          } else {
+              echo "<script>
+                      alert('Simpan data Gagal!');
+                      document.location='layanan.php';
+                  </script>";
+          }
+      } else {
+          echo "<script>alert('Maaf, error saat upload.');</script>";
+      }
+  }
 }
 
 ?>
@@ -194,6 +231,23 @@ if(isset($_POST['simpan'])){
                 </ul>
               </div>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#waktu" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Waktu Pengerjaan</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+              </a>
+              <div class="collapse" id="waktu">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                    <a class="nav-link" href="slotwaktu.php">Lihat Waktu Pengerjaan</a>
+
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="tambah_slot.php">Tambah Waktu Pengerjaan</a>
+                    </li>
+                </ul>
+              </div>
+            </li>
           </ul>
         </nav>
         <!-- partial -->
@@ -206,21 +260,26 @@ if(isset($_POST['simpan'])){
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <form class="forms-sample" method="POST">
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
                       <div class="form-group">
-                        <label for="exampleInputUsername1">Nama Layanan</label>
-                        <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama Layanan" required>
+                          <label for="exampleInputUsername1">Nama Layanan</label>
+                          <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama Layanan" required>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail1">Biaya</label>
-                        <input type="number" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
+                          <label for="exampleInputEmail1">Biaya</label>
+                          <input type="number" class="form-control" name="biaya" id="biaya" placeholder="Biaya" required>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail1">Kuota</label>
-                        <input type="number" class="form-control" name="kuota" id="kuota" placeholder="Kuota" required>
+                          <label for="exampleInputEmail1">Kuota</label>
+                          <input type="number" class="form-control" name="kuota" id="kuota" placeholder="Kuota" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="gambar">Upload Gambar</label>
+                          <input type="file" class="form-control" name="gambar" id="gambar" accept="image/*" required>
+                          <small class="form-text text-muted">Upload gambar dengan format JPG, JPEG, atau PNG (Max. 5MB)</small>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
-                    </form>
+                  </form>
                   </div>
                 </div>
               </div>

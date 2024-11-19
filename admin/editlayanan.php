@@ -14,38 +14,89 @@ if($_SESSION['status'] != 'login'){
 }
 
 if(isset($_GET['hal'])){
-    if($_GET['hal'] == "edit"){
-        $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
-        $data = mysqli_fetch_array($tampil);
-        if($data){
-            $id = $data['id_jenis_cucian_221061'];
-            $jenis_cucian = $data['jenis_cucian_221061'];
-            $biaya = $data['biaya_221061'];
-            $kuota = $data['kuota_221061'];
-
-        }
-    }
+  if($_GET['hal'] == "edit"){
+      $tampil = mysqli_query($koneksi, "SELECT * FROM jenis_cucian_221061 WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+      $data = mysqli_fetch_array($tampil);
+      if($data){
+          $id = $data['id_jenis_cucian_221061'];
+          $jenis_cucian = $data['jenis_cucian_221061'];
+          $biaya = $data['biaya_221061'];
+          $kuota = $data['kuota_221061'];
+          $gambar_lama = $data['gambar_221061'];
+      }
+  }
 }
 
 if (isset($_POST['simpan'])) {
-    // Update data pelanggan
-    $simpan = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET
-                                        jenis_cucian_221061 = '$_POST[nama]',
-                                        biaya_221061 = '$_POST[biaya]',
-                                        kuota_221061 = '$_POST[kuota]'
-                                      WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+  $gambar_lama = $_POST['gambar_lama'];
+  
+  // Check if new image is uploaded
+  if($_FILES['gambar']['name'] != "") {
+      // Handle image upload
+      $target_dir = "uploads/";
+      $file_name = basename($_FILES["gambar"]["name"]);
+      $target_file = $target_dir . $file_name;
+      $uploadOk = 1;
+      $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+      
+      // Check if image file is actual image
+      $check = getimagesize($_FILES["gambar"]["tmp_name"]);
+      if($check === false) {
+          echo "<script>alert('File bukan gambar.');</script>";
+          $uploadOk = 0;
+      }
+      
+      // Check file size (limit to 5MB)
+      if ($_FILES["gambar"]["size"] > 5000000) {
+          echo "<script>alert('Maaf, file terlalu besar.');</script>";
+          $uploadOk = 0;
+      }
+      
+      // Allow certain file formats
+      if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+          echo "<script>alert('Maaf, hanya JPG, JPEG & PNG yang diperbolehkan.');</script>";
+          $uploadOk = 0;
+      }
 
-    if ($simpan) {
-        echo "<script>
-                alert('Edit data sukses!');
-                document.location='layanan.php';
-              </script>";
-    } else {
-        echo "<script>
-                alert('Edit data Gagal!');
-                document.location='layanan.php';
-              </script>";
-    }
+      if ($uploadOk == 1) {
+          // Delete old image if exists
+          if($gambar_lama != "" && file_exists($target_dir . $gambar_lama)) {
+              unlink($target_dir . $gambar_lama);
+          }
+
+          if (move_uploaded_file($_FILES["gambar"]["tmp_name"], $target_file)) {
+              // Update with new image
+              $simpan = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET
+                                              jenis_cucian_221061 = '$_POST[nama]',
+                                              biaya_221061 = '$_POST[biaya]',
+                                              kuota_221061 = '$_POST[kuota]',
+                                              gambar_221061 = '$file_name'
+                                            WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+          } else {
+              echo "<script>alert('Maaf, error saat upload.');</script>";
+              exit;
+          }
+      }
+  } else {
+      // Update without changing image
+      $simpan = mysqli_query($koneksi, "UPDATE jenis_cucian_221061 SET
+                                      jenis_cucian_221061 = '$_POST[nama]',
+                                      biaya_221061 = '$_POST[biaya]',
+                                      kuota_221061 = '$_POST[kuota]'
+                                    WHERE id_jenis_cucian_221061 = '$_GET[id]'");
+  }
+
+  if ($simpan) {
+      echo "<script>
+              alert('Edit data sukses!');
+              document.location='layanan.php';
+            </script>";
+  } else {
+      echo "<script>
+              alert('Edit data Gagal!');
+              document.location='layanan.php';
+            </script>";
+  }
 }
 
 ?>
@@ -212,6 +263,23 @@ if (isset($_POST['simpan'])) {
                 </ul>
               </div>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#waktu" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Waktu Pengerjaan</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+              </a>
+              <div class="collapse" id="waktu">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                    <a class="nav-link" href="slotwaktu.php">Lihat Waktu Pengerjaan</a>
+
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="tambah_slot.php">Tambah Waktu Pengerjaan</a>
+                    </li>
+                </ul>
+              </div>
+            </li>
           </ul>
         </nav>
         <!-- partial -->
@@ -224,21 +292,32 @@ if (isset($_POST['simpan'])) {
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <form class="forms-sample" method="POST">
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
                       <div class="form-group">
-                        <label for="exampleInputUsername1">Nama Layanan</label>
-                        <input type="text" class="form-control" name="nama" id="nama" value="<?= $jenis_cucian ?>" placeholder="Nama Layanan" required>
+                          <label for="exampleInputUsername1">Nama Layanan</label>
+                          <input type="text" class="form-control" name="nama" id="nama" value="<?= $jenis_cucian ?>" placeholder="Nama Layanan" required>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail1">Biaya</label>
-                        <input type="number" class="form-control" name="biaya" id="biaya" value="<?= $biaya ?>" placeholder="Biaya" required>
+                          <label for="exampleInputEmail1">Biaya</label>
+                          <input type="number" class="form-control" name="biaya" id="biaya" value="<?= $biaya ?>" placeholder="Biaya" required>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail1">Kuota</label>
-                        <input type="number" class="form-control" name="kuota" id="kuota" value="<?= $kuota ?>" placeholder="Kuota" required>
+                          <label for="exampleInputEmail1">Kuota</label>
+                          <input type="number" class="form-control" name="kuota" id="kuota" value="<?= $kuota ?>" placeholder="Kuota" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="gambar">Upload Gambar</label>
+                          <?php if(isset($gambar_lama) && $gambar_lama != ""): ?>
+                              <div class="mb-2">
+                                  <img src="uploads/<?= $gambar_lama ?>" alt="Current Image" style="max-width: 200px;">
+                              </div>
+                          <?php endif; ?>
+                          <input type="file" class="form-control" name="gambar" id="gambar" accept="image/*">
+                          <input type="hidden" name="gambar_lama" value="<?= $gambar_lama ?>">
+                          <small class="form-text text-muted">Upload gambar baru jika ingin mengubah gambar (JPG, JPEG, atau PNG, Max. 5MB)</small>
                       </div>
                       <button type="submit" name="simpan" class="btn btn-gradient-primary me-2">Submit</button>
-                    </form>
+                  </form>
                   </div>
                 </div>
               </div>

@@ -189,6 +189,22 @@ if(isset($_GET['hal']) == "hapus"){
                 </ul>
               </div>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#waktu" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Waktu Pengerjaan</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+              </a>
+              <div class="collapse" id="waktu">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                      <a class="nav-link" href="slotwaktu.php">Lihat Waktu Pengerjaan</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="tambah_slot.php">Tambah Waktu Pengerjaan</a>
+                    </li>
+                </ul>
+              </div>
+            </li>
           </ul>
         </nav>
         <!-- partial -->
