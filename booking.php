@@ -91,12 +91,12 @@ if(isset($_SESSION['status']) != 'login'){
                 if ($kurangiKuota) {
                     echo "<script>
                             alert('Berhasil booking, segera lakukan pembayaran!');
-                            document.location='pelanggan';
+                            document.location='index.php';
                           </script>";
                 } else {
                     echo "<script>
                             alert('Booking berhasil, tapi gagal mengurangi kuota!');
-                            document.location='pelanggan';
+                            document.location='index.php';
                           </script>";
                 }
             } else {
