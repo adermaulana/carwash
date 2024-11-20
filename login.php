@@ -45,7 +45,7 @@
           $_SESSION['telepon_pelanggan'] = $admin_data['no_hp_221061'];;
           $_SESSION['status'] = "login";
           // Redirect ke halaman admin
-          header('location:pelanggan');
+          header('location:index.php');
       } else {
             echo "<script>
                 alert('Login Gagal, Periksa Username dan Password Anda!');
