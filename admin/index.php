@@ -172,6 +172,17 @@ $total_pelanggan = $rowpelanggan["id_customer_221061"];
               </div>
             </li>
             <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#laporan" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Laporan</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+              </a>
+              <div class="collapse" id="laporan">
+                <ul class="nav flex-column sub-menu">
+                  <a class="nav-link" href="laporan.php">Lihat Laporan</a>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#waktu" aria-expanded="false" aria-controls="charts">
                 <span class="menu-title">Waktu Pengerjaan</span>
                 <i class="mdi mdi-chart-bar menu-icon"></i>
