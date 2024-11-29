@@ -256,6 +256,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <th>No</th>
                           <th>Nota Booking</th>
                           <th>Nama Pelanggan</th>
+                          <th>Jenis Cucian</th>
                           <th>Tanggal Transaksi</th>
                           <th>Total Biaya</th>
                           <th>Status</th>
@@ -276,11 +277,14 @@ if(isset($_GET['hal']) == "hapus"){
                             $tampil = mysqli_query($koneksi, "SELECT 
                                                                 transaksi_221061.*, 
                                                                 pendaftaran_221061.total_biaya_221061,
-                                                                customer_221061.nama_221061
+                                                                customer_221061.nama_221061,
+                                                                jenis_cucian_221061.jenis_cucian_221061
                                                             FROM 
                                                                 transaksi_221061
                                                             JOIN 
                                                                 pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
+                                                            JOIN 
+                                                                jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
                                                             JOIN 
                                                                 customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
                                                             $where
@@ -292,6 +296,7 @@ if(isset($_GET['hal']) == "hapus"){
                           <td><?= $no++ ?></td>
                           <td><?= $data['no_nota_221061'] ?></td>
                           <td><?= $data['nama_221061'] ?></td>
+                          <td><?= $data['jenis_cucian_221061'] ?></td>
                           <td><?= $data['tanggal_221061'] ?></td>
                           <td>Rp. <?= number_format($data['total_biaya_221061'], 0, ',', '.') ?></td>
                           <td><span class="badge badge-success"><?= $data['status_221061'] ?></span></td>

@@ -43,11 +43,14 @@ $where_clause = $where_conditions ? 'WHERE ' . implode(' AND ', $where_condition
 $query = "SELECT 
             transaksi_221061.*, 
             pendaftaran_221061.total_biaya_221061,
-            customer_221061.nama_221061
+            customer_221061.nama_221061,
+                                                                jenis_cucian_221061.jenis_cucian_221061
           FROM 
             transaksi_221061
           JOIN 
             pendaftaran_221061 ON transaksi_221061.id_pendaftaran_221061 = pendaftaran_221061.id_pendaftaran_221061
+                                                            JOIN 
+                                                                jenis_cucian_221061 ON pendaftaran_221061.id_jenis_cucian_221061 = jenis_cucian_221061.id_jenis_cucian_221061
           JOIN 
             customer_221061 ON pendaftaran_221061.id_customer_221061 = customer_221061.id_customer_221061
           $where_clause
@@ -85,11 +88,11 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
 // Set document information
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Admin');
-$pdf->SetTitle('Laporan Transaksi');
+$pdf->SetTitle('CAR WASH - Laporan Transaksi');
 $pdf->SetSubject('Transaction Report');
 
 // Set default header data
-$pdf->SetHeaderData('', 0, 'Laporan Transaksi', "Periode: " . 
+$pdf->SetHeaderData('', 0, 'CAR WASH - Laporan Transaksi', "Periode: " . 
     ($start_date ? $start_date : 'Semua Tanggal') . 
     " s/d " . 
     ($end_date ? $end_date : 'Sekarang'));
@@ -136,6 +139,7 @@ $html .= '<table>
                     <th>No</th>
                     <th>Nota Booking</th>
                     <th>Nama Pelanggan</th>
+                    <th>Jenis Cucian</th>
                     <th>Tanggal Transaksi</th>
                     <th>Total Biaya</th>
                     <th>Status</th>
@@ -150,6 +154,7 @@ while ($data = mysqli_fetch_array($result)) {
                 <td style="text-align:center;">' . $no++ . '</td>
                 <td>' . htmlspecialchars($data['no_nota_221061']) . '</td>
                 <td>' . htmlspecialchars($data['nama_221061']) . '</td>
+                <td>' . htmlspecialchars($data['jenis_cucian_221061']) . '</td>
                 <td style="text-align:center;">' . htmlspecialchars($data['tanggal_221061']) . '</td>
                 <td style="text-align:right;">Rp. ' . number_format($data['total_biaya_221061'], 0, ',', '.') . '</td>
                 <td style="text-align:center;">' . htmlspecialchars($data['status_221061']) . '</td>
