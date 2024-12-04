@@ -92,7 +92,7 @@ $pdf->SetTitle('CAR WASH - Laporan Transaksi');
 $pdf->SetSubject('Transaction Report');
 
 // Set default header data
-$pdf->SetHeaderData('', 0, 'CAR WASH - Laporan Transaksi', "Periode: " . 
+$pdf->SetHeaderData('', 0, 'Laporan Transaksi', "Periode: " . 
     ($start_date ? $start_date : 'Semua Tanggal') . 
     " s/d " . 
     ($end_date ? $end_date : 'Sekarang'));
@@ -132,7 +132,7 @@ $html = '<style>
     }
 </style>';
 
-$html .= '<h2 style="text-align:center;">Laporan Transaksi</h2>';
+$html .= '<h2 style="text-align:center;">CAR WASH</h2>';
 $html .= '<table>
             <thead>
                 <tr>
@@ -142,7 +142,6 @@ $html .= '<table>
                     <th>Jenis Cucian</th>
                     <th>Tanggal Transaksi</th>
                     <th>Total Biaya</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>';
@@ -157,14 +156,13 @@ while ($data = mysqli_fetch_array($result)) {
                 <td>' . htmlspecialchars($data['jenis_cucian_221061']) . '</td>
                 <td style="text-align:center;">' . htmlspecialchars($data['tanggal_221061']) . '</td>
                 <td style="text-align:right;">Rp. ' . number_format($data['total_biaya_221061'], 0, ',', '.') . '</td>
-                <td style="text-align:center;">' . htmlspecialchars($data['status_221061']) . '</td>
               </tr>';
     $total_biaya += $data['total_biaya_221061'];
 }
 
 // Add total row
 $html .= '<tr>
-            <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
+            <td colspan="5" style="text-align:right;"><strong>Total</strong></td>
             <td style="text-align:right;"><strong>Rp. ' . number_format($total_biaya, 0, ',', '.') . '</strong></td>
             <td></td>
           </tr>';
