@@ -225,7 +225,7 @@ if(isset($_GET['hal']) == "hapus"){
                           }
                           echo '</td>';
                           ?>
-                          <td>Bagus</td>
+                          <td><?= $data['deskripsi_221061'] ?></td>
                         </tr>
                         <?php
                             endwhile; 
