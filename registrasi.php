@@ -9,7 +9,6 @@ if (isset($_SESSION['status']) == 'login') {
 }
 
 if (isset($_POST['registrasi'])) {
-
     $username = $_POST['username'];
     if (strlen($username) < 6) {
         echo "<script>
@@ -130,8 +129,9 @@ if (isset($_POST['registrasi'])) {
                                     <div id="teleponError" class="error-message">Nomor telepon tidak valid</div>
                                 </div>
                                 <div class="form-group">
-                                    <textarea class="form-control form-control-lg" name="alamat" placeholder="Alamat" name="" id=""
+                                    <textarea class="form-control form-control-lg" name="alamat" id="alamat" placeholder="Alamat" name="" id=""
                                         rows="4" required></textarea>
+                                    <div id="alamatError" class="error-message">Alamat harus diisi</div>
                                 </div>
                                 <div class="form-group">
                                     <input required type="password" name="password" class="form-control form-control-lg"
@@ -173,6 +173,7 @@ if (isset($_POST['registrasi'])) {
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('registrationForm');
             const nama = document.getElementById('nama');
+            const alamat = document.getElementById('alamat');
             const username = document.getElementById('username');
             const telepon = document.getElementById('telepon');
             const password = document.getElementById('password');
@@ -190,6 +191,15 @@ if (isset($_POST['registrasi'])) {
                     return false;
                 }
                 namaError.style.display = 'none';
+                return true;
+            }
+
+            function validateAlamat() {
+                if (alamat.value.trim() === '') {
+                    alamatError.style.display = 'block';
+                    return false;
+                }
+                alamatError.style.display = 'none';
                 return true;
             }
 
@@ -232,6 +242,7 @@ if (isset($_POST['registrasi'])) {
 
             // Real-time validation
             nama.addEventListener('input', validateNama);
+            alamat.addEventListener('input', validateAlamat);
             username.addEventListener('input', validateUsername);
             telepon.addEventListener('input', validateTelepon);
             password.addEventListener('input', validatePassword);
@@ -241,11 +252,12 @@ if (isset($_POST['registrasi'])) {
                 event.preventDefault();
 
                 const isNamaValid = validateNama();
+                const isAlamatValid = validateAlamat();
                 const isUsernameValid = validateUsername();
                 const isTeleponValid = validateTelepon();
                 const isPasswordValid = validatePassword();
 
-                if (isNamaValid && isUsernameValid && isTeleponValid && isPasswordValid) {
+                if (isNamaValid && isUsernameValid && isTeleponValid && isPasswordValid && isAlamatValid) {
                     form.submit();
                 }
             });
