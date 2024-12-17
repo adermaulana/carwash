@@ -47,8 +47,13 @@ if (isset($_POST['registrasi'])) {
         exit(); // Stop further execution
     }
 
+    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+    $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
+    $username = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $telepon = mysqli_real_escape_string($koneksi, $_POST['telepon']);
+
     // If the username is not taken, proceed with the registration
-    $simpan = mysqli_query($koneksi, "INSERT INTO customer_221061 (nama_221061, alamat_221061, username_221061,no_hp_221061, password_221061) VALUES ('$_POST[nama]','$_POST[alamat]','$_POST[username]','$_POST[telepon]','$password')");
+    $simpan = mysqli_query($koneksi, "INSERT INTO customer_221061 (nama_221061, alamat_221061, username_221061, no_hp_221061, password_221061) VALUES ('$nama','$alamat','$username','$telepon','$password')");
 
     if ($simpan) {
         echo "<script>
@@ -129,8 +134,8 @@ if (isset($_POST['registrasi'])) {
                                     <div id="teleponError" class="error-message">Nomor telepon tidak valid</div>
                                 </div>
                                 <div class="form-group">
-                                    <textarea class="form-control form-control-lg" name="alamat" id="alamat" placeholder="Alamat" name="" id=""
-                                        rows="4" required></textarea>
+                                    <textarea class="form-control form-control-lg" name="alamat" id="alamat" placeholder="Alamat" name=""
+                                        id="" rows="4" required></textarea>
                                     <div id="alamatError" class="error-message">Alamat harus diisi</div>
                                 </div>
                                 <div class="form-group">
